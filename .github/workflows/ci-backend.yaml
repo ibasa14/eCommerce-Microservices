@@ -87,7 +87,7 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=15 --max-line-length=80 --statistics
       - name: Lint with MyPy
         run: |
-          mypy . --pretty
+          mypy . --pretty --exclude alembic/ --config=backend/pyproject.toml
 
   test:
     name: "Test 🔬"
