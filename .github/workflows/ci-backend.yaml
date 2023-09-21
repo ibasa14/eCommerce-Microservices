@@ -105,9 +105,9 @@ jobs:
       postgres:
         image: postgres:latest
         env:
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-          POSTGRES_USER: ${{ secrets.POSTGRES_USERNAME }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ vars.POSTGRES_DB }}
+          POSTGRES_USER: ${{ vars.POSTGRES_USERNAME }}
+          POSTGRES_PASSWORD: ${{ vars.POSTGRES_PASSWORD }}
         ports:
           - 5432:5432
         options: >-
@@ -116,37 +116,37 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     env:
-      ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
-      DEBUG: ${{ secrets.DEBUG }}
-      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-      POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
-      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-      POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
-      POSTGRES_SCHEMA: ${{ secrets.POSTGRES_SCHEMA }}
-      POSTGRES_USERNAME: ${{ secrets.POSTGRES_USERNAME }}
-      BACKEND_SERVER_HOST: ${{ secrets.BACKEND_SERVER_HOST }}
-      BACKEND_SERVER_PORT: ${{ secrets.BACKEND_SERVER_PORT }}
-      BACKEND_SERVER_WORKERS: ${{ secrets.BACKEND_SERVER_WORKERS }}
-      DB_TIMEOUT: ${{ secrets.DB_TIMEOUT }}
-      DB_POOL_SIZE: ${{ secrets.DB_POOL_SIZE }}
-      DB_MAX_POOL_CON: ${{ secrets.DB_MAX_POOL_CON }}
-      DB_POOL_OVERFLOW: ${{ secrets.DB_POOL_OVERFLOW }}
-      IS_DB_ECHO_LOG: ${{ secrets.IS_DB_ECHO_LOG }}
-      IS_DB_EXPIRE_ON_COMMIT: ${{ secrets.IS_DB_EXPIRE_ON_COMMIT }}
-      IS_DB_FORCE_ROLLBACK: ${{ secrets.IS_DB_FORCE_ROLLBACK }}
-      IS_ALLOWED_CREDENTIALS: ${{ secrets.IS_ALLOWED_CREDENTIALS }}
-      API_TOKEN: ${{ secrets.API_TOKEN }}
-      AUTH_TOKEN: ${{ secrets.AUTH_TOKEN }}
-      JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-      JWT_SUBJECT: ${{ secrets.JWT_SUBJECT }}
-      JWT_TOKEN_PREFIX: ${{ secrets.JWT_TOKEN_PREFIX }}
-      JWT_ALGORITHM: ${{ secrets.JWT_ALGORITHM }}
-      JWT_MIN: ${{ secrets.JWT_MIN }}
-      JWT_HOUR: ${{ secrets.JWT_HOUR }}
-      JWT_DAY: ${{ secrets.JWT_DAY }}
-      HASHING_ALGORITHM_LAYER_1: ${{ secrets.HASHING_ALGORITHM_LAYER_1 }}
-      HASHING_ALGORITHM_LAYER_2: ${{ secrets.HASHING_ALGORITHM_LAYER_2 }}
-      HASHING_SALT: ${{ secrets.HASHING_SALT }}
+      ENVIRONMENT: ${{ vars.ENVIRONMENT }}
+      DEBUG: ${{ vars.DEBUG }}
+      POSTGRES_DB: ${{ vars.POSTGRES_DB }}
+      POSTGRES_HOST: ${{ vars.POSTGRES_HOST }}
+      POSTGRES_PASSWORD: ${{ vars.POSTGRES_PASSWORD }}
+      POSTGRES_PORT: ${{ vars.POSTGRES_PORT }}
+      POSTGRES_SCHEMA: ${{ vars.POSTGRES_SCHEMA }}
+      POSTGRES_USERNAME: ${{ vars.POSTGRES_USERNAME }}
+      BACKEND_SERVER_HOST: ${{ vars.BACKEND_SERVER_HOST }}
+      BACKEND_SERVER_PORT: ${{ vars.BACKEND_SERVER_PORT }}
+      BACKEND_SERVER_WORKERS: ${{ vars.BACKEND_SERVER_WORKERS }}
+      DB_TIMEOUT: ${{ vars.DB_TIMEOUT }}
+      DB_POOL_SIZE: ${{ vars.DB_POOL_SIZE }}
+      DB_MAX_POOL_CON: ${{ vars.DB_MAX_POOL_CON }}
+      DB_POOL_OVERFLOW: ${{ vars.DB_POOL_OVERFLOW }}
+      IS_DB_ECHO_LOG: ${{ vars.IS_DB_ECHO_LOG }}
+      IS_DB_EXPIRE_ON_COMMIT: ${{ vars.IS_DB_EXPIRE_ON_COMMIT }}
+      IS_DB_FORCE_ROLLBACK: ${{ vars.IS_DB_FORCE_ROLLBACK }}
+      IS_ALLOWED_CREDENTIALS: ${{ vars.IS_ALLOWED_CREDENTIALS }}
+      API_TOKEN: ${{ vars.API_TOKEN }}
+      AUTH_TOKEN: ${{ vars.AUTH_TOKEN }}
+      JWT_SECRET_KEY: ${{ vars.JWT_SECRET_KEY }}
+      JWT_SUBJECT: ${{ vars.JWT_SUBJECT }}
+      JWT_TOKEN_PREFIX: ${{ vars.JWT_TOKEN_PREFIX }}
+      JWT_ALGORITHM: ${{ vars.JWT_ALGORITHM }}
+      JWT_MIN: ${{ vars.JWT_MIN }}
+      JWT_HOUR: ${{ vars.JWT_HOUR }}
+      JWT_DAY: ${{ vars.JWT_DAY }}
+      HASHING_ALGORITHM_LAYER_1: ${{ vars.HASHING_ALGORITHM_LAYER_1 }}
+      HASHING_ALGORITHM_LAYER_2: ${{ vars.HASHING_ALGORITHM_LAYER_2 }}
+      HASHING_SALT: ${{ vars.HASHING_SALT }}
 
     runs-on: ${{ matrix.os }}
     steps:
