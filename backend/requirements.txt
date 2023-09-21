@@ -12,7 +12,7 @@ greenlet
 httpx
 isort
 loguru
-mypy
+mypy==1.5.1
 passlib
 pathlib
 pre-commit

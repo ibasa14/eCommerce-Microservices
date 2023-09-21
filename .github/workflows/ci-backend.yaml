@@ -20,7 +20,7 @@ jobs:
         os:
           - ubuntu-latest
         python-version:
-          - "3.11"
+          - "3.8"
     defaults:
       run:
         working-directory: backend/
@@ -48,7 +48,7 @@ jobs:
         os:
           - ubuntu-latest
         python-version:
-          - "3.11"
+          - "3.8"
     defaults:
       run:
         working-directory: backend/
@@ -97,15 +97,15 @@ jobs:
         os:
           - ubuntu-latest
         python-version:
-          - "3.11"
+          - "3.8"
     defaults:
       run:
         working-directory: backend/
     services:
       postgres:
-        image: postgres:14.2-alpine
+        image: postgres:latest
         env:
-          POSTGRES_DB: ${{  secrets.POSTGRES_DB  }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
           POSTGRES_USER: ${{ secrets.POSTGRES_USERNAME }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
         ports:
@@ -137,7 +137,6 @@ jobs:
       IS_ALLOWED_CREDENTIALS: ${{ secrets.IS_ALLOWED_CREDENTIALS }}
       API_TOKEN: ${{ secrets.API_TOKEN }}
       AUTH_TOKEN: ${{ secrets.AUTH_TOKEN }}
-      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
       JWT_SUBJECT: ${{ secrets.JWT_SUBJECT }}
       JWT_TOKEN_PREFIX: ${{ secrets.JWT_TOKEN_PREFIX }}
