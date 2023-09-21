@@ -1,8 +1,13 @@
-from fastapi import FastAPI
+import fastapi
+import uvicorn
 
-app = FastAPI()
+
+def initialize_backend_application() -> fastapi.FastAPI:
+    app = fastapi.FastAPI()  # type: ignore
+    return app
 
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+app: fastapi.FastAPI = initialize_backend_application()
+
+if __name__ == "__main__":
+    uvicorn.run(app="main.app")
