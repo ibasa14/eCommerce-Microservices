@@ -35,11 +35,9 @@ repos:
         args:
           - --settings-path=backend/pyproject.toml
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v0.991"
     hooks:
       - id: mypy
-        args:
-          - --config-file=backend/pyproject.toml --pretty
+        args: ["--config-file=backend/pyproject.toml", "--pretty"]
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: "v3.0.0-alpha.4"
     hooks:
