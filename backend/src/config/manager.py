@@ -1,8 +1,7 @@
+import typing
 from functools import lru_cache
 
 import decouple
-
-import typing
 
 from src.config.settings.base import BackendBaseSettings
 from src.config.settings.development import BackendDevSettings
