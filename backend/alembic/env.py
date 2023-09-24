@@ -1,11 +1,11 @@
 import os
-from dotenv import load_dotenv
 from logging.config import fileConfig
 
 from alembic import context
+from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, pool
+from backend.src.config.manager import settings
 
-load_dotenv()
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
@@ -13,17 +13,17 @@ section = config.config_ini_section
 config.set_section_option(
     section,
     "POSTGRES_USERNAME",
-    os.environ.get("POSTGRES_USERNAME"),
+    settings.DB_POSTGRES_USERNAME,
 )
 config.set_section_option(
     section,
     "POSTGRES_PASSWORD",
-    os.environ.get("POSTGRES_PASSWORD"),
+    settings.DB_POSTGRES_PASSWORD,
 )
 config.set_section_option(
-    section, "POSTGRES_HOST", os.environ.get("POSTGRES_HOST_ALEMBIC")
+    section, "POSTGRES_HOST", settings.DB_POSTGRES_HOST_ALEMBIC
 )
-config.set_section_option(section, "POSTGRES_DB", os.environ.get("POSTGRES_DB"))
+config.set_section_option(section, "POSTGRES_DB", settings.DB_POSTGRES_NAME)
 
 
 from src.data.database import SqlAlchemyBase
