@@ -38,3 +38,6 @@ class HashGenerator:
         return self._hash_ctx_layer_2.verify(
             secret=password, hash=hashed_password
         )
+
+
+hash_generator: HashGenerator = HashGenerator()
