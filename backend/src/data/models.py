@@ -40,7 +40,9 @@ class User(SqlAlchemyBase):  # type: ignore
     name: Column[String] = Column(String, nullable=False, unique=True)  # type: ignore
     email: Column[String] = Column(String, nullable=False, unique=True)  # type: ignore
     hashed_password: Column[String] = Column(String, nullable=False)  # type: ignore
+    hash_salt: Column[String] = Column(String, nullable=False)  # type: ignore
     is_active: Column[Boolean] = Column(Boolean, default=True)  # type: ignore
+    is_logged_in: Column[Boolean] = Column(Boolean, default=False)  # type: ignore
     role_id: Column[Integer] = Column(Integer, ForeignKey("roles.id_role"))  # type: ignore
     role: Relationship[Any] = relationship("Role")  # type: ignore
     orders: Relationship[Any] = relationship("Order", back_populates="user")  # type: ignore

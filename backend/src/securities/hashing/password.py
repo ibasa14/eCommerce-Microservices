@@ -19,3 +19,10 @@ class PasswordGenerator:
         return hash_generator.is_password_verified(
             password=hash_salt + password, hashed_password=hashed_password
         )
+
+
+def get_pwd_generator() -> PasswordGenerator:
+    return PasswordGenerator()
+
+
+password_generator: PasswordGenerator = get_pwd_generator()

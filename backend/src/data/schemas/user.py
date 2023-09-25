@@ -11,6 +11,13 @@ class UserInCreate(BaseSchemaModel):
     password: str
 
 
+class UserOutCreate(BaseSchemaModel):
+    name: str
+    email: pydantic.EmailStr
+    role_id: int
+    is_active: int
+
+
 class UserInUpdate(BaseSchemaModel):
     name: str | None
     email: str | None
@@ -20,7 +27,7 @@ class UserInUpdate(BaseSchemaModel):
 
 
 class UserInLogin(BaseSchemaModel):
-    username: str
+    email: str
     password: str
 
 
