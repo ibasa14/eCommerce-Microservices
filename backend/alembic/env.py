@@ -2,7 +2,12 @@ import os
 from logging.config import fileConfig
 
 from alembic import context
-from backend.src.config.manager import settings
+import pathlib
+
+os.chdir(pathlib.Path(__file__).parent.resolve())
+
+
+from src.config.manager import settings
 from sqlalchemy import engine_from_config, pool
 
 # this is the Alembic Config object, which provides
@@ -19,9 +24,7 @@ config.set_section_option(
     "POSTGRES_PASSWORD",
     settings.DB_POSTGRES_PASSWORD,
 )
-config.set_section_option(
-    section, "POSTGRES_HOST", settings.DB_POSTGRES_HOST_ALEMBIC
-)
+config.set_section_option(section, "POSTGRES_HOST", settings.DB_POSTGRES_HOST)
 config.set_section_option(section, "POSTGRES_DB", settings.DB_POSTGRES_NAME)
 
 

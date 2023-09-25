@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession as SQLAlchemyAsyncSession
 from typing import TypeVar, Type, Any, Optional
-from backend.src.data.database import SqlAlchemyBase
+from src.data.database import SqlAlchemyBase
 import sqlalchemy
 from src.utilities.exceptions.database import (
     EntityAlreadyExists,
