@@ -1,16 +1,8 @@
 import logging
-import pathlib
 
 import pydantic_settings
 
-from decouple import Config, RepositoryEnv
-
-
-ROOT_DIR: pathlib.Path = pathlib.Path(
-    __file__
-).parent.parent.parent.parent.resolve()
-
-config = Config(RepositoryEnv(f"{str(ROOT_DIR)}/.env"))
+from decouple import config
 
 
 class BackendBaseSettings(pydantic_settings.BaseSettings):
