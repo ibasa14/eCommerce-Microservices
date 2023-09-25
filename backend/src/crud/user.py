@@ -10,7 +10,7 @@ from src.data.schemas.user import (
     UserInLogin,
     UserInUpdate,
 )
-from src.crud.base import BaseCRUDRepository
+from src.crud.base import BaseCRUD
 from src.securities.hashing.password import password_generator
 
 from src.securities.verification.credentials import credential_verifier
@@ -23,7 +23,7 @@ from src.utilities.exceptions.database import (
 from src.utilities.exceptions.password import PasswordDoesNotMatch
 
 
-class UserCRUDRepository(BaseCRUDRepository):
+class UserCRUD(BaseCRUD):
     async def create_user(self, user_create: UserInCreate) -> UserOutCreate:
         hash_salt = password_generator.generate_salt
         hashed_password = password_generator.generate_hashed_password(
@@ -42,20 +42,6 @@ class UserCRUDRepository(BaseCRUDRepository):
         await self.async_session.refresh(instance=new_user)
 
         return new_user
-
-    async def read_users(self) -> typing.Sequence[User]:
-        stmt = sqlalchemy.select(User)
-        query = await self.async_session.execute(statement=stmt)
-        return query.scalars().all()
-
-    async def read_user_by_id(self, id: int) -> User:
-        stmt = sqlalchemy.select(User).where(User.id_user_user == id)
-        query = await self.async_session.execute(statement=stmt)
-
-        if not query:
-            raise EntityDoesNotExist("User with id-user `{id}` does not exist!")
-
-        return query.scalar()  # type: ignore
 
     async def read_user_by_username(self, username: str) -> User:
         stmt = sqlalchemy.select(User).where(User.name == username)
@@ -101,14 +87,14 @@ class UserCRUDRepository(BaseCRUDRepository):
     ) -> User:
         new_user_data = dict(user_update)
 
-        select_stmt = sqlalchemy.select(User).where(User.id_user_user == id)
+        select_stmt = sqlalchemy.select(User).where(User.id_user == id)
         query = await self.async_session.execute(statement=select_stmt)
         update_user = query.scalar()
 
         if not update_user:
             raise EntityDoesNotExist(f"User with id_user `{id}` does not exist!")  # type: ignore
 
-        update_stmt = sqlalchemy.update(table=User).where(User.id_user_user == update_user.id_user)  # type: ignore
+        update_stmt = sqlalchemy.update(table=User).where(User.id_user == update_user.id_user)  # type: ignore
 
         if new_user_data["name"]:
             update_stmt = update_stmt.values(username=new_user_data["username"])
@@ -117,31 +103,18 @@ class UserCRUDRepository(BaseCRUDRepository):
             update_stmt = update_stmt.values(username=new_user_data["email"])
 
         if new_user_data["password"]:
-            update_user.set_hash_salt(hash_salt=pwd_generator.generate_salt)  # type: ignore
-            update_user.set_hashed_password(hashed_password=pwd_generator.generate_hashed_password(hash_salt=update_user.hash_salt, new_password=new_user_data["password"]))  # type: ignore
+            hash_salt = password_generator.generate_salt
+            hashed_password = password_generator.generate_hashed_password(
+                hash_salt, update_user.hashed_password
+            )
+            update_user.hashed_password = hash_salt  # type: ignore
+            update_user.hashed_password = hashed_password  # type: ignore
 
         await self.async_session.execute(statement=update_stmt)
         await self.async_session.commit()
         await self.async_session.refresh(instance=update_user)
 
         return update_user  # type: ignore
-
-    async def delete_user_by_id(self, id: int) -> str:
-        select_stmt = sqlalchemy.select(User).where(User.id_user == id)
-        query = await self.async_session.execute(statement=select_stmt)
-        delete_user = query.scalar()
-
-        if not delete_user:
-            raise EntityDoesNotExist(f"User with id `{id}` does not exist!")  # type: ignore
-
-        stmt = sqlalchemy.delete(table=User).where(
-            User.id_user == delete_user.id
-        )
-
-        await self.async_session.execute(statement=stmt)
-        await self.async_session.commit()
-
-        return f"User with id '{id}' is successfully deleted!"
 
     async def is_username_taken(self, username: str) -> bool:
         username_stmt = (

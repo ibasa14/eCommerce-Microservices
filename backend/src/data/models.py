@@ -47,6 +47,10 @@ class User(SqlAlchemyBase):  # type: ignore
     role: Relationship[Any] = relationship("Role")  # type: ignore
     orders: Relationship[Any] = relationship("Order", back_populates="user")  # type: ignore
 
+    @property
+    def id(self) -> int:
+        return self.id_user
+
 
 class Role(SqlAlchemyBase):  # type: ignore
     __tablename__: str = "roles"
@@ -54,6 +58,10 @@ class Role(SqlAlchemyBase):  # type: ignore
         Integer, primary_key=True, autoincrement=True
     )  # type: ignore
     name: Column[Enum] = Column(Enum(RoleType))  # type: ignore
+
+    @property
+    def id(self) -> int:
+        return self.id_role
 
 
 class Product(SqlAlchemyBase):  # type: ignore
@@ -72,6 +80,10 @@ class Product(SqlAlchemyBase):  # type: ignore
         "Category", back_populates="products"
     )  # type: ignore
 
+    @property
+    def id(self) -> int:
+        return self.id_product
+
 
 class Category(SqlAlchemyBase):  # type: ignore
     __tablename__: str = "categories"
@@ -82,6 +94,10 @@ class Category(SqlAlchemyBase):  # type: ignore
     products: Relationship[Any] = relationship(
         "Product", back_populates="category"
     )  # type: ignore
+
+    @property
+    def id(self) -> int:
+        return self.id_category
 
 
 class Order(SqlAlchemyBase):  # type: ignore
@@ -99,6 +115,10 @@ class Order(SqlAlchemyBase):  # type: ignore
     order_detail: Relationship[Any] = relationship(
         "OrderDetail", back_populates="order"
     )  # type: ignore
+
+    @property
+    def id(self) -> int:
+        return self.id_order
 
 
 class OrderDetail(SqlAlchemyBase):  # type: ignore
@@ -122,3 +142,7 @@ class OrderDetail(SqlAlchemyBase):  # type: ignore
     __table_args__: Tuple[CheckConstraint] = (
         CheckConstraint(quantity > 0, name="check_quantity_positive"),
     )  # type: ignore
+
+    @property
+    def id(self) -> int:
+        return self.id_order_detail
