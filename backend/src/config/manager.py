@@ -17,14 +17,14 @@ class BackendSettingsFactory:
     @classmethod
     def get_env_settings(
         cls, environment: str
-    ) -> typing.Any[
+    ) -> typing.Union[
         BackendDevSettings, BackendProdSettings, BackendStageSettings
     ]:
         if environment == Environment.DEVELOPMENT.value:
-            return BackendDevSettings()
+            return BackendDevSettings
         elif environment == Environment.STAGING.value:
-            return BackendStageSettings()
-        return BackendProdSettings()
+            return BackendStageSettings
+        return BackendProdSettings
 
 
 @lru_cache()

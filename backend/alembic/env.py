@@ -1,12 +1,10 @@
 import os
-from logging.config import fileConfig
-
-from alembic import context
 import pathlib
 
-os.chdir(pathlib.Path(__file__).parent.resolve())
+os.chdir(pathlib.Path(__file__).parent.parent.resolve())
 
-
+from alembic import context
+from logging.config import fileConfig
 from src.config.manager import settings
 from sqlalchemy import engine_from_config, pool
 
