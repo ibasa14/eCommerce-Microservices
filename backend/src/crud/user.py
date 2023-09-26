@@ -82,9 +82,7 @@ class UserCRUD(BaseCRUD):
 
         return db_user  # type: ignore
 
-    async def update_user_by_id(
-        self, id: int, user_update: UserInUpdate
-    ) -> User:
+    async def update_user(self, id: int, user_update: UserInUpdate) -> User:
         new_user_data = dict(user_update)
 
         select_stmt = sqlalchemy.select(User).where(User.id_user == id)

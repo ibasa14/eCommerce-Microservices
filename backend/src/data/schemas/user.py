@@ -42,4 +42,5 @@ class UserWithToken(BaseSchemaModel):
 
 class UserInResponse(BaseSchemaModel):
     id: int
-    authorized_account: UserWithToken
+    name: str
+    # authorized_account: UserWithToken
