@@ -3,6 +3,7 @@ import pydantic
 from typing import List, Dict
 from src.api.dependencies.repository import get_repository
 import src.data.schemas.user as UserSchema
+from src.data.models import User
 from src.crud.user import UserCRUD
 from src.utilities.exceptions.database import EntityDoesNotExist
 from src.utilities.exceptions.http.exc_404 import (
@@ -21,7 +22,9 @@ router = fastapi.APIRouter(prefix="/user", tags=["user"])
     status_code=fastapi.status.HTTP_200_OK,
 )
 async def get_multiple_user(
-    user_crud: UserCRUD = fastapi.Depends(get_repository(repo_type=UserCRUD)),
+    user_crud: UserCRUD = fastapi.Depends(
+        get_repository(repo_type=UserCRUD, model=User)
+    ),
 ) -> List[UserSchema.UserInResponse]:
     db_users = await user_crud.get_multiple()
     db_users_list: list = list()
@@ -41,7 +44,9 @@ async def get_multiple_user(
 )
 async def get_user(
     id: int,
-    user_crud: UserCRUD = fastapi.Depends(get_repository(repo_type=UserCRUD)),
+    user_crud: UserCRUD = fastapi.Depends(
+        get_repository(repo_type=UserCRUD, model=User)
+    ),
 ) -> UserSchema.UserInResponse:
     try:
         db_user = await user_crud.get(id=id)
@@ -61,7 +66,9 @@ async def get_user(
 async def create_user(
     query_id: int,
     user_create: UserSchema.UserInResponse,
-    user_crud: UserCRUD = fastapi.Depends(get_repository(repo_type=UserCRUD)),
+    user_crud: UserCRUD = fastapi.Depends(
+        get_repository(repo_type=UserCRUD, model=User)
+    ),
 ) -> UserSchema.UserInResponse:
     try:
         created_user = await user_crud.create_user(
@@ -83,7 +90,9 @@ async def create_user(
 async def update_user(
     query_id: int,
     user_in_update: UserSchema.UserInUpdate,
-    user_crud: UserCRUD = fastapi.Depends(get_repository(repo_type=UserCRUD)),
+    user_crud: UserCRUD = fastapi.Depends(
+        get_repository(repo_type=UserCRUD, model=User)
+    ),
 ) -> UserSchema.UserInResponse:
     user_update = UserSchema.UserInUpdate(user_in_update)
     try:
@@ -106,7 +115,9 @@ async def update_user(
 )
 async def delete_account(
     id: int,
-    user_crud: UserCRUD = fastapi.Depends(get_repository(repo_type=UserCRUD)),
+    user_crud: UserCRUD = fastapi.Depends(
+        get_repository(repo_type=UserCRUD, model=User)
+    ),
 ) -> Dict[str, str]:
     try:
         deletion_result = await user_crud.delete(id=id)

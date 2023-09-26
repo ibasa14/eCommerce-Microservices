@@ -1,7 +1,7 @@
 import datetime
 import typing
-
 import pydantic
+import pydantic_settings
 
 from src.utilities.formatters import (
     format_datetime_into_isoformat,
@@ -10,7 +10,7 @@ from src.utilities.formatters import (
 
 
 class BaseSchemaModel(pydantic.BaseModel):
-    class Config(pydantic.Config):
+    class Config(pydantic_settings.BaseSettings):
         orm_mode: bool = True
         validate_assignment: bool = True
         allow_population_by_field_name: bool = True
