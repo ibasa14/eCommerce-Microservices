@@ -17,12 +17,13 @@ services:
     ports:
       - 5433:5432
 
-  backend_app:
-    container_name: backend_app
+  app:
+    container_name: app
     restart: always
     build:
       dockerfile: Dockerfile
       context: ./backend/
+    command: tail -F anything
     environment:
       - ENVIRONMENT=${ENVIRONMENT}
       - DEBUG=${DEBUG}

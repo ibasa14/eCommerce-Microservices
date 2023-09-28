@@ -1,20 +1,47 @@
-"""db complete
+"""db definition
 
-Revision ID: a1b0d81311c4
+Revision ID: 05c456d9a1db
 Revises:
-Create Date: 2023-09-22 18:31:46.383144
+Create Date: 2023-09-27 14:25:02.937311
 
 """
 from typing import Sequence, Union
 
-import sqlalchemy as sa
 from alembic import op
+import sqlalchemy as sa
+
 
 # revision identifiers, used by Alembic.
-revision: str = "a1b0d81311c4"
+revision: str = "05c456d9a1db"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
+
+
+POPULATE_ROLE_TABLE: str = """
+    INSERT INTO roles(name)
+    VALUES ('admin'),
+        ('client');
+"""
+
+POPULATE_CATEGORY_TABLE: str = """
+    INSERT INTO categories(name)
+    VALUES ('meat'),
+            ('seafood'),
+            ('beverage'),
+            ('nonfood'),
+            ('bakery');
+"""
+
+
+def populate_role_and_category() -> None:
+    op.execute(POPULATE_ROLE_TABLE)
+    op.execute(POPULATE_CATEGORY_TABLE)
+
+
+def clean_role_and_category() -> None:
+    op.execute("DELETE FROM roles;")
+    op.execute("DELETE FROM categories;")
 
 
 def upgrade() -> None:
@@ -24,19 +51,14 @@ def upgrade() -> None:
         sa.Column(
             "id_category", sa.Integer(), autoincrement=True, nullable=False
         ),
-        sa.Column(
-            "name",
-            sa.Enum(
-                "meat",
-                "seafood",
-                "beverage",
-                "nonfood",
-                "bakery",
-                name="categorytype",
-            ),
-            nullable=True,
-        ),
+        sa.Column("name", sa.String(), nullable=False),
         sa.PrimaryKeyConstraint("id_category"),
+    )
+    op.create_table(
+        "roles",
+        sa.Column("id_role", sa.Integer(), autoincrement=True, nullable=False),
+        sa.Column("name", sa.String(), nullable=False),
+        sa.PrimaryKeyConstraint("id_role"),
     )
     op.create_table(
         "products",
@@ -48,27 +70,12 @@ def upgrade() -> None:
         sa.Column("picture", sa.String(), nullable=True),
         sa.Column("price", sa.Float(), nullable=False),
         sa.Column("stock", sa.Integer(), nullable=True),
-        sa.Column(
-            "category_id",
-            sa.Enum(
-                "meat",
-                "seafood",
-                "beverage",
-                "nonfood",
-                "bakery",
-                name="categorytype",
-            ),
-            nullable=True,
+        sa.Column("category_id", sa.Integer(), nullable=True),
+        sa.ForeignKeyConstraint(
+            ["category_id"],
+            ["categories.id_category"],
         ),
         sa.PrimaryKeyConstraint("id_product"),
-    )
-    op.create_table(
-        "roles",
-        sa.Column("id_role", sa.Integer(), autoincrement=True, nullable=False),
-        sa.Column(
-            "name", sa.Enum("admin", "client", name="roletype"), nullable=True
-        ),
-        sa.PrimaryKeyConstraint("id_role"),
     )
     op.create_table(
         "users",
@@ -76,7 +83,9 @@ def upgrade() -> None:
         sa.Column("name", sa.String(), nullable=False),
         sa.Column("email", sa.String(), nullable=False),
         sa.Column("hashed_password", sa.String(), nullable=False),
+        sa.Column("hash_salt", sa.String(), nullable=False),
         sa.Column("is_active", sa.Boolean(), nullable=True),
+        sa.Column("is_logged_in", sa.Boolean(), nullable=True),
         sa.Column("role_id", sa.Integer(), nullable=True),
         sa.ForeignKeyConstraint(
             ["role_id"],
@@ -123,6 +132,7 @@ def upgrade() -> None:
         ),
         sa.PrimaryKeyConstraint("id_order_detail"),
     )
+    populate_role_and_category()
     # ### end Alembic commands ###
 
 
@@ -131,7 +141,7 @@ def downgrade() -> None:
     op.drop_table("order_details")
     op.drop_table("orders")
     op.drop_table("users")
-    op.drop_table("roles")
     op.drop_table("products")
+    op.drop_table("roles")
     op.drop_table("categories")
     # ### end Alembic commands ###
