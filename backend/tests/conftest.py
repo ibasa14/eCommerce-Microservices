@@ -1,9 +1,11 @@
-import asgi_lifespan
+# import asgi_lifespan
 import fastapi
-import httpx
+
+# import httpx
 import pytest
 from fastapi.testclient import TestClient
 from src.main import initialize_backend_application
+
 # from src.data.init_db import InitDB
 
 
@@ -12,7 +14,7 @@ from src.main import initialize_backend_application
 #     InitDB().populate_users_table()
 
 
-@pytest.fixture(scope = "session")
+@pytest.fixture(scope="session")
 def backend_test_app() -> fastapi.FastAPI:
     """
     A fixture that re-initializes the FastAPI instance for test application.
@@ -34,6 +36,7 @@ def backend_test_app() -> fastapi.FastAPI:
 #         headers={"Content-Type": "application/json"},
 #     ) as client:
 #         yield client
+
 
 @pytest.fixture(scope="session")
 def sync_client(backend_test_app: fastapi.FastAPI) -> TestClient:  # type: ignore

@@ -8,7 +8,7 @@ from sqlalchemy.pool import (
     Pool as SQLAlchemyPool,
     QueuePool as SQLAlchemyQueuePool,
 )
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from src.config.manager import settings
 
 
