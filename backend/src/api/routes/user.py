@@ -64,19 +64,12 @@ async def get_user(
     status_code=fastapi.status.HTTP_200_OK,
 )
 async def create_user(
-    query_id: int,
     user_create: UserSchema.UserInResponse,
     user_crud: UserCRUD = fastapi.Depends(
         get_repository(repo_type=UserCRUD, model=User)
     ),
 ) -> UserSchema.UserInResponse:
-    try:
-        created_user = await user_crud.create_user(
-            id=query_id, user_create=user_create
-        )
-
-    except Exception:
-        raise await http_404_exc_id_not_found_request(id=query_id)
+    created_user = await user_crud.create_user(user_create=user_create)
 
     return UserSchema.UserInResponse(id=created_user.id, name=created_user.name)
 

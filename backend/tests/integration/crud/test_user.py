@@ -1,14 +1,12 @@
-# import pytest
-# import httpx
 from src.config.manager import settings
-from fastapi.testclient import TestClient
+import httpx
 
 
-def test_get_multiple_users(sync_client: TestClient) -> None:
-    url = "http://localhost:8000/api/user"
-    # response = await async_client.get(
-    #         f"http://{settings.SERVER_PORT}:{settings.SERVER_PORT}/{settings.API_PREFIX}/user",
-    #     )
-    # response2 = await async_client.get(url)
-    response = sync_client.get(url)
-    assert response.json() == ""
+async def test_get_multiple_users(async_client: httpx.AsyncClient) -> None:
+    response = await async_client.get(
+        f"http://{settings.SERVER_HOST}:{settings.SERVER_PORT}{settings.API_PREFIX}/user",
+    )
+    assert response.json() == [
+        {"id": 1, "name": "user1"},
+        {"id": 2, "name": "user2"},
+    ]

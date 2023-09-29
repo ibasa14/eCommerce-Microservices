@@ -1,12 +1,10 @@
 from sqlalchemy.ext.asyncio import AsyncSession as SQLAlchemyAsyncSession
-from typing import TypeVar, Type, Any, Optional
+from typing import TypeVar, Type, Any, Optional, Sequence
 from src.data.database import SqlAlchemyBase
 import sqlalchemy
 from src.utilities.exceptions.database import (
-    EntityAlreadyExists,
     EntityDoesNotExist,
 )
-import typing
 
 ModelType = TypeVar("ModelType", bound=SqlAlchemyBase)
 
@@ -28,7 +26,7 @@ class BaseCRUD:
             )
         return query.scalar()
 
-    async def get_multiple(self) -> Optional[typing.Sequence[ModelType]]:
+    async def get_multiple(self) -> Optional[Sequence[ModelType]]:
         stmt = sqlalchemy.select(self.model)
         query = await self.async_session.execute(statement=stmt)
         return query.scalars().all()
@@ -49,3 +47,10 @@ class BaseCRUD:
         await self.async_session.commit()
 
         return f"{self.model.__class__.__name__} with id '{id}' is successfully deleted!"
+
+    async def delete_multiple(self) -> str:
+        stmt = sqlalchemy.delete(table=self.model)
+        await self.async_session.execute(statement=stmt)
+        await self.async_session.commit()
+
+        return f"{self.model.__class__.__name__} table cleaned!"

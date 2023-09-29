@@ -45,7 +45,7 @@ class User(SqlAlchemyBase):  # type: ignore
     is_logged_in: Column[Boolean] = Column(Boolean, default=False)  # type: ignore
     role_id: Column[Integer] = Column(Integer, ForeignKey("roles.id_role"))  # type: ignore
     role = relationship("Role", back_populates="users")  # type: ignore
-    orders = relationship("Order", back_populates="user")  # type: ignore
+    orders = relationship("Order", back_populates="user", cascade="all, delete")  # type: ignore
 
     @property
     def id(self) -> int:
