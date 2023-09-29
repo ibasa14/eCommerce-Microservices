@@ -14,4 +14,6 @@ done
 
 echo "DB Connection --- Successfully Established!"
 
+alembic upgrade head
+
 exec "$@"
