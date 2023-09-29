@@ -1,8 +1,6 @@
 import fastapi
-import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 
-import os
 from src.api.endpoints import router as api_endpoint_router
 
 # from src.config.events import execute_backend_server_event_handler, terminate_backend_server_event_handler
@@ -35,13 +33,3 @@ def initialize_backend_application() -> fastapi.FastAPI:
 
 
 app: fastapi.FastAPI = initialize_backend_application()
-
-if __name__ == "__main__":
-    uvicorn.run(
-        app="main:app",
-        host=settings.SERVER_HOST,
-        port=settings.SERVER_PORT,
-        reload=settings.DEBUG,
-        workers=settings.SERVER_WORKERS,
-        log_level=settings.LOGGING_LEVEL,
-    )
