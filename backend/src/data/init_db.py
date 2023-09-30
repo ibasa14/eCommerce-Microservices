@@ -84,9 +84,23 @@ class InitDB:
         df = pd.DataFrame(data)
         return df
 
-    def populate_users_table(self):
-        with self.engine.connect() as conn:
+    def clean_users_table(self):
+        with self.engine.begin() as conn:
             conn.execute(text("DELETE FROM users;"))
-            self.users_table.to_sql(
-                "users", conn, if_exists="append", index=False
+            conn.commit()
+
+    def populate_users_table(self):
+        with self.engine.begin() as conn:
+            conn.execute(
+                text(
+                    """
+                    INSERT INTO users(name, email, hashed_password, hash_salt, is_active, is_logged_in, role_id)
+                    VALUES ('user1','email_user1@email.com','hashed1','hash_salt1',True, True, 1),
+                           ('user2','email_user2@email.com','hashed2','hash_salt2',True, True, 2);
+                    """
+                )
             )
+        # with self.engine.begin() as conn:
+        #     self.users_table.to_sql(
+        #         "users", conn, if_exists="append", index=False
+        #     )

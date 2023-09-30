@@ -6,6 +6,7 @@ from fastapi.testclient import TestClient
 from src.main import initialize_backend_application
 import asyncio
 from src.data.init_db import InitDB
+from src.config.manager import settings
 
 
 # NOTE: this is required to prevent ScopeMismatch error
@@ -21,7 +22,13 @@ def event_loop():
 @pytest.fixture(scope="session", autouse=True)
 def test_db() -> None:
     init_db = InitDB()
+    init_db.clean_users_table()
     init_db.populate_users_table()
+
+
+@pytest.fixture(scope="session")
+def api_url() -> str:
+    return f"http://{settings.SERVER_HOST}:{settings.SERVER_PORT}{settings.API_PREFIX}"
 
 
 @pytest.fixture(scope="session")
