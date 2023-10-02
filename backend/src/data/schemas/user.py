@@ -1,7 +1,7 @@
 import datetime
 
 import pydantic
-
+from typing import Optional
 from src.data.schemas.base import BaseSchemaModel
 
 
@@ -9,6 +9,7 @@ class UserInCreate(BaseSchemaModel):
     name: str
     email: pydantic.EmailStr
     password: str
+    role_id: int
 
 
 class UserOutCreate(BaseSchemaModel):
@@ -19,11 +20,11 @@ class UserOutCreate(BaseSchemaModel):
 
 
 class UserInUpdate(BaseSchemaModel):
-    name: str | None
-    email: str | None
-    password: str | None
-    is_active: bool | None
-    role_id: int | None
+    name: Optional[str] = None
+    email: Optional[str] = None
+    password: Optional[str] = None
+    is_active: Optional[bool] = None
+    role_id: Optional[int] = None
 
 
 class UserInLogin(BaseSchemaModel):

@@ -58,13 +58,13 @@ async def get_user(
 
 
 @router.post(
-    path="/",
-    name="user:post-user",
+    path="",
+    name="users:post-user",
     response_model=UserSchema.UserInResponse,
-    status_code=fastapi.status.HTTP_200_OK,
+    status_code=fastapi.status.HTTP_201_CREATED,
 )
 async def create_user(
-    user_create: UserSchema.UserInResponse,
+    user_create: UserSchema.UserInCreate,
     user_crud: UserCRUD = fastapi.Depends(
         get_repository(repo_type=UserCRUD, model=User)
     ),
@@ -76,25 +76,24 @@ async def create_user(
 
 @router.put(
     path="/{id}",
-    name="user:update-user",
+    name="users:update-user",
     response_model=UserSchema.UserInResponse,
     status_code=fastapi.status.HTTP_200_OK,
 )
 async def update_user(
-    query_id: int,
+    id: int,
     user_in_update: UserSchema.UserInUpdate,
     user_crud: UserCRUD = fastapi.Depends(
         get_repository(repo_type=UserCRUD, model=User)
     ),
 ) -> UserSchema.UserInResponse:
-    user_update = UserSchema.UserInUpdate(user_in_update)
     try:
         updated_db_user = await user_crud.update_user(
-            id=query_id, user_update=user_update
+            id=id, user_update=user_in_update
         )
 
     except EntityDoesNotExist:
-        raise await http_404_exc_id_not_found_request(id=query_id)
+        raise await http_404_exc_id_not_found_request(id=id)
 
     return UserSchema.UserInResponse(
         id=updated_db_user.id, name=updated_db_user.name
@@ -102,11 +101,11 @@ async def update_user(
 
 
 @router.delete(
-    path="",
-    name="user:delete-user",
+    path="/{id}",
+    name="users:delete-user",
     status_code=fastapi.status.HTTP_200_OK,
 )
-async def delete_account(
+async def delete_user(
     id: int,
     user_crud: UserCRUD = fastapi.Depends(
         get_repository(repo_type=UserCRUD, model=User)

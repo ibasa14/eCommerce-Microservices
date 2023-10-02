@@ -34,7 +34,7 @@ class UserCRUD(BaseCRUD):
             hashed_password=hashed_password,
             hash_salt=hash_salt,
             email=user_create.email,
-            is_logged_in=False,
+            role_id=user_create.role_id,
         )
 
         self.async_session.add(instance=new_user)
@@ -83,7 +83,7 @@ class UserCRUD(BaseCRUD):
         return db_user  # type: ignore
 
     async def update_user(self, id: int, user_update: UserInUpdate) -> User:
-        new_user_data = dict(user_update)
+        new_user_data = user_update.dict(exclude_none=True)
 
         select_stmt = sqlalchemy.select(User).where(User.id == id)
         query = await self.async_session.execute(statement=select_stmt)
@@ -94,19 +94,16 @@ class UserCRUD(BaseCRUD):
 
         update_stmt = sqlalchemy.update(table=User).where(User.id == update_user.id)  # type: ignore
 
-        if new_user_data["name"]:
-            update_stmt = update_stmt.values(username=new_user_data["username"])
+        for key in new_user_data:
+            if key=="password":
+                hash_salt = password_generator.generate_salt
+                hashed_password = password_generator.generate_hashed_password(
+                    hash_salt, update_user.hashed_password
+                )
+                update_stmt = update_stmt.values({"hashed_password":hashed_password}, {"hash_salt":hash_salt})
 
-        if new_user_data["email"]:
-            update_stmt = update_stmt.values(username=new_user_data["email"])
-
-        if new_user_data["password"]:
-            hash_salt = password_generator.generate_salt
-            hashed_password = password_generator.generate_hashed_password(
-                hash_salt, update_user.hashed_password
-            )
-            update_user.hashed_password = hash_salt  # type: ignore
-            update_user.hashed_password = hashed_password  # type: ignore
+            else:
+                update_stmt = update_stmt.values({key:new_user_data[key]})
 
         await self.async_session.execute(statement=update_stmt)
         await self.async_session.commit()
