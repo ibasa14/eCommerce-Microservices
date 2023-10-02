@@ -13,7 +13,7 @@ from sqlalchemy import (
     Integer,
     String,
 )
-from sqlalchemy.orm import relationship, Relationship
+from sqlalchemy.orm import relationship
 
 from .database import SqlAlchemyBase  # type: ignore
 
@@ -34,7 +34,7 @@ class CategoryType(enum.Enum):
 class User(SqlAlchemyBase):  # type: ignore
     __tablename__: str = "users"
 
-    id_user: Column[Integer] = Column(
+    id: Column[Integer] = Column(
         Integer, primary_key=True, autoincrement=True
     )  # type: ignore
     name: Column[String] = Column(String, nullable=False, unique=True)  # type: ignore
@@ -43,32 +43,26 @@ class User(SqlAlchemyBase):  # type: ignore
     hash_salt: Column[String] = Column(String, nullable=False)  # type: ignore
     is_active: Column[Boolean] = Column(Boolean, default=True)  # type: ignore
     is_logged_in: Column[Boolean] = Column(Boolean, default=False)  # type: ignore
-    role_id: Column[Integer] = Column(Integer, ForeignKey("roles.id_role"))  # type: ignore
+    role_id: Column[Integer] = Column(Integer, ForeignKey("roles.id"))  # type: ignore
     role = relationship("Role", back_populates="users")  # type: ignore
     orders = relationship("Order", back_populates="user", cascade="all, delete")  # type: ignore
 
-    @property
-    def id(self) -> int:
-        return self.id_user
 
 
 class Role(SqlAlchemyBase):  # type: ignore
     __tablename__: str = "roles"
-    id_role: Column[Integer] = Column(
+    id: Column[Integer] = Column(
         Integer, primary_key=True, autoincrement=True
     )  # type: ignore
     name: Column[Enum] = Column(String, nullable=False)  # type: ignore
     users = relationship("User", back_populates="role", uselist=False, cascade="all, delete")  # type: ignore
 
-    @property
-    def id(self) -> int:
-        return self.id_role
 
 
 class Product(SqlAlchemyBase):  # type: ignore
     __tablename__: str = "products"
 
-    id_product: Column[Integer] = Column(
+    id: Column[Integer] = Column(
         Integer, primary_key=True, autoincrement=True
     )  # type: ignore
     name: Column[String] = Column(String, nullable=False)  # type: ignore
@@ -76,20 +70,16 @@ class Product(SqlAlchemyBase):  # type: ignore
     picture: Column[String] = Column(String, default="not_defined.png")  # type: ignore
     price: Column[Float] = Column(Float, nullable=False)  # type: ignore
     stock: Column[Integer] = Column(Integer, default=0)  # type: ignore
-    category_id: Column[Integer] = Column(Integer, ForeignKey("categories.id_category"))  # type: ignore
+    category_id: Column[Integer] = Column(Integer, ForeignKey("categories.id"))  # type: ignore
     category = relationship(
         "Category", back_populates="products"
     )  # type: ignore
     order_detail = relationship("OrderDetail", uselist=False)
 
-    @property
-    def id(self) -> int:
-        return self.id_product
-
 
 class Category(SqlAlchemyBase):  # type: ignore
     __tablename__: str = "categories"
-    id_category: Column[Integer] = Column(
+    id: Column[Integer] = Column(
         Integer, primary_key=True, autoincrement=True
     )  # type: ignore
     name: Column[Enum] = Column(String, nullable=False)
@@ -100,18 +90,14 @@ class Category(SqlAlchemyBase):  # type: ignore
         cascade="all, delete",
     )  # type: ignore
 
-    @property
-    def id(self) -> int:
-        return self.id_category
-
 
 class Order(SqlAlchemyBase):  # type: ignore
     __tablename__: str = "orders"
 
-    id_order: Column[Integer] = Column(
+    id: Column[Integer] = Column(
         Integer, primary_key=True, autoincrement=True
     )  # type: ignore
-    user_id: Column[Integer] = Column(Integer, ForeignKey("users.id_user"))  # type: ignore
+    user_id: Column[Integer] = Column(Integer, ForeignKey("users.id"))  # type: ignore
     user = relationship("User", back_populates="orders")  # type: ignore
     date: Column[DateTime] = Column(
         DateTime(timezone=True), server_default=func.now()
@@ -124,24 +110,20 @@ class Order(SqlAlchemyBase):  # type: ignore
         cascade="all, delete",
     )  # type: ignore
 
-    @property
-    def id(self) -> int:
-        return self.id_order
-
 
 class OrderDetail(SqlAlchemyBase):  # type: ignore
     __tablename__: str = "order_details"
 
-    id_order_detail: Column[Integer] = Column(
+    id: Column[Integer] = Column(
         Integer, primary_key=True, autoincrement=True
     )  # type: ignore
     product_id: Column[Integer] = Column(
-        Integer, ForeignKey("products.id_product")
+        Integer, ForeignKey("products.id")
     )  # type: ignore
     product = relationship(
         "Product", back_populates="order_detail"
     )  # type: ignore
-    order_id: Column[Integer] = Column(Integer, ForeignKey("orders.id_order"))  # type: ignore
+    order_id: Column[Integer] = Column(Integer, ForeignKey("orders.id"))  # type: ignore
     order = relationship(
         "Order", back_populates="order_details"
     )  # type: ignore
@@ -150,7 +132,3 @@ class OrderDetail(SqlAlchemyBase):  # type: ignore
     __table_args__: Tuple[CheckConstraint] = (
         CheckConstraint(quantity > 0, name="check_quantity_positive"),
     )  # type: ignore
-
-    @property
-    def id(self) -> int:
-        return self.id_order_detail

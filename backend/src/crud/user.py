@@ -85,14 +85,14 @@ class UserCRUD(BaseCRUD):
     async def update_user(self, id: int, user_update: UserInUpdate) -> User:
         new_user_data = dict(user_update)
 
-        select_stmt = sqlalchemy.select(User).where(User.id_user == id)
+        select_stmt = sqlalchemy.select(User).where(User.id == id)
         query = await self.async_session.execute(statement=select_stmt)
         update_user = query.scalar()
 
         if not update_user:
-            raise EntityDoesNotExist(f"User with id_user `{id}` does not exist!")  # type: ignore
+            raise EntityDoesNotExist(f"User with id `{id}` does not exist!")  # type: ignore
 
-        update_stmt = sqlalchemy.update(table=User).where(User.id_user == update_user.id_user)  # type: ignore
+        update_stmt = sqlalchemy.update(table=User).where(User.id == update_user.id)  # type: ignore
 
         if new_user_data["name"]:
             update_stmt = update_stmt.values(username=new_user_data["username"])

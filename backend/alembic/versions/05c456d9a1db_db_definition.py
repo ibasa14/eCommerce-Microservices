@@ -49,21 +49,21 @@ def upgrade() -> None:
     op.create_table(
         "categories",
         sa.Column(
-            "id_category", sa.Integer(), autoincrement=True, nullable=False
+            "id", sa.Integer(), autoincrement=True, nullable=False
         ),
         sa.Column("name", sa.String(), nullable=False),
-        sa.PrimaryKeyConstraint("id_category"),
+        sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
         "roles",
-        sa.Column("id_role", sa.Integer(), autoincrement=True, nullable=False),
+        sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
         sa.Column("name", sa.String(), nullable=False),
-        sa.PrimaryKeyConstraint("id_role"),
+        sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
         "products",
         sa.Column(
-            "id_product", sa.Integer(), autoincrement=True, nullable=False
+            "id", sa.Integer(), autoincrement=True, nullable=False
         ),
         sa.Column("name", sa.String(), nullable=False),
         sa.Column("description", sa.String(), nullable=True),
@@ -73,13 +73,13 @@ def upgrade() -> None:
         sa.Column("category_id", sa.Integer(), nullable=True),
         sa.ForeignKeyConstraint(
             ["category_id"],
-            ["categories.id_category"],
+            ["categories.id"],
         ),
-        sa.PrimaryKeyConstraint("id_product"),
+        sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
         "users",
-        sa.Column("id_user", sa.Integer(), autoincrement=True, nullable=False),
+        sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
         sa.Column("name", sa.String(), nullable=False),
         sa.Column("email", sa.String(), nullable=False),
         sa.Column("hashed_password", sa.String(), nullable=False),
@@ -89,15 +89,15 @@ def upgrade() -> None:
         sa.Column("role_id", sa.Integer(), nullable=True),
         sa.ForeignKeyConstraint(
             ["role_id"],
-            ["roles.id_role"],
+            ["roles.id"],
         ),
-        sa.PrimaryKeyConstraint("id_user"),
+        sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("email"),
         sa.UniqueConstraint("name"),
     )
     op.create_table(
         "orders",
-        sa.Column("id_order", sa.Integer(), autoincrement=True, nullable=False),
+        sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
         sa.Column("user_id", sa.Integer(), nullable=True),
         sa.Column(
             "date",
@@ -108,14 +108,14 @@ def upgrade() -> None:
         sa.Column("total", sa.Float(), nullable=True),
         sa.ForeignKeyConstraint(
             ["user_id"],
-            ["users.id_user"],
+            ["users.id"],
         ),
-        sa.PrimaryKeyConstraint("id_order"),
+        sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
         "order_details",
         sa.Column(
-            "id_order_detail", sa.Integer(), autoincrement=True, nullable=False
+            "id", sa.Integer(), autoincrement=True, nullable=False
         ),
         sa.Column("product_id", sa.Integer(), nullable=True),
         sa.Column("order_id", sa.Integer(), nullable=True),
@@ -124,13 +124,13 @@ def upgrade() -> None:
         sa.CheckConstraint("quantity > 0", name="check_quantity_positive"),
         sa.ForeignKeyConstraint(
             ["order_id"],
-            ["orders.id_order"],
+            ["orders.id"],
         ),
         sa.ForeignKeyConstraint(
             ["product_id"],
-            ["products.id_product"],
+            ["products.id"],
         ),
-        sa.PrimaryKeyConstraint("id_order_detail"),
+        sa.PrimaryKeyConstraint("id"),
     )
     populate_role_and_category()
     # ### end Alembic commands ###
