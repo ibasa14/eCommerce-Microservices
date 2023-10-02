@@ -9,7 +9,7 @@ import os
 
 class InitDB:
     def __init__(self):
-        self.db_uri: str = f"{settings.DB_POSTGRES_SCHEMA}://{settings.DB_POSTGRES_USERNAME}:{settings.DB_POSTGRES_PASSWORD}@{settings.DB_POSTGRES_HOST}:{settings.DB_POSTGRES_PORT}/{settings.DB_POSTGRES_NAME}"
+        self.db_uri: str = f"{settings.DB_POSTGRES_SCHEMA}://{settings.DB_POSTGRES_USERNAME}:{settings.DB_POSTGRES_PASSWORD}@{settings.DB_POSTGRES_HOST}:{settings.DB_POSTGRES_PORT}/postgres_testing"
         self.engine: Engine = create_engine(self.db_uri)
         self.alembic_directory = os.path.join(
             Path(__file__).parent.parent.parent.resolve(), "alembic"
