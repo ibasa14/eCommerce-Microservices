@@ -104,6 +104,5 @@ addopts = '''
     -p no:warnings
     --strict-markers
     --tb=short
-    --numprocesses=auto
     --asyncio-mode=auto
 '''

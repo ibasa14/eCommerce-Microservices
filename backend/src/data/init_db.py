@@ -1,74 +1,23 @@
-# from src.crud.base import ModelType, BaseCRUD
-# from src.crud.user import UserCRUD
-# from src.data.models import User
-# from typing import Dict, Tuple, TypeVar, Type, List
-# from src.api.dependencies.repository import get_repository
-# from sqlalchemy.ext.asyncio import AsyncSession as SQLAlchemyAsyncSession
-# from src.api.dependencies.session import get_async_session
-
-# CrudType = TypeVar("CrudType", bound=BaseCRUD)
-
-
-# class InitDB:
-#     TABLE_NAME_CRUD_TRANSLATOR: Dict[
-#         str, Tuple[Type[CrudType], Type[ModelType]] | None
-#     ] = {
-#         "users": (UserCRUD, User),
-#     }
-
-#     @property
-#     def users_data(self) -> List[User]:
-#         user_1 = {
-#             "name": "user1",
-#             "email": "email_user1@email.com",
-#             "hashed_password": "hashed1",
-#             "hash_salt": "hash_salt1",
-#             "is_active": True,
-#             "is_logged_in": True,
-#             "role_id": 1,
-#         }
-#         user_2 = {
-#             "name": "user2",
-#             "email": "email_user2@email.com",
-#             "hashed_password": "hashed2",
-#             "hash_salt": "hash_salt2",
-#             "is_active": True,
-#             "is_logged_in": True,
-#             "role_id": 2,
-#         }
-#         return [User(**user_1), User(**user_2)]
-
-#     async def _clean_tables(
-#         self,
-#         *table_names: str | None,
-#     ):
-#         for table_name in table_names:
-#             tuple_param: Tuple[
-#                 Type[CrudType], Type[ModelType]
-#             ] = self.TABLE_NAME_CRUD_TRANSLATOR.get(table_name)
-#             crud_repo: CrudType = tuple_param[0](
-#                 anext(get_async_session()), tuple_param[1]
-#             )
-#             await crud_repo.delete_multiple()
-
-#     async def fill_user_table(self):
-#         tuple_param: Tuple[
-#             Type[CrudType], Type[ModelType]
-#         ] = self.TABLE_NAME_CRUD_TRANSLATOR.get("users")
-#         user_crud: UserCRUD = tuple_param[0](get_async_session, tuple_param[1])
-#         for user in self.users_data:
-#             await user_crud.create_user(user_create=user)
-
-
 from src.config.manager import settings
-from sqlalchemy import create_engine, Engine, text
+from sqlalchemy import create_engine, Engine
 import pandas as pd
+from alembic.config import Config
+from alembic import command
+from pathlib import Path
+import os
 
 
 class InitDB:
     def __init__(self):
-        self.uri: str = f"{settings.DB_POSTGRES_SCHEMA}://{settings.DB_POSTGRES_USERNAME}:{settings.DB_POSTGRES_PASSWORD}@{settings.DB_POSTGRES_HOST}:{settings.DB_POSTGRES_PORT}/{settings.DB_POSTGRES_NAME}"
-        self.engine: Engine = create_engine(self.uri)
+        self.db_uri: str = f"{settings.DB_POSTGRES_SCHEMA}://{settings.DB_POSTGRES_USERNAME}:{settings.DB_POSTGRES_PASSWORD}@{settings.DB_POSTGRES_HOST}:{settings.DB_POSTGRES_PORT}/{settings.DB_POSTGRES_NAME}"
+        self.engine: Engine = create_engine(self.db_uri)
+        self.alembic_directory = os.path.join(
+            Path(__file__).parent.parent.parent.resolve(), "alembic"
+        )
+        self.ini_path = os.path.join(
+            Path(__file__).parent.parent.parent.resolve(), "alembic.ini"
+        )
+        self._clean_db_to_definition()
 
     @property
     def users_table(self):
@@ -84,23 +33,17 @@ class InitDB:
         df = pd.DataFrame(data)
         return df
 
-    def clean_users_table(self):
+    def _clean_db_to_definition(self) -> None:
+        alembic_cfg = Config(self.ini_path)
+        alembic_cfg.set_main_option("script_location", self.alembic_directory)
+        alembic_cfg.set_main_option("sqlalchemy.url", self.db_uri)
         with self.engine.begin() as conn:
-            conn.execute(text("DELETE FROM users;"))
-            conn.commit()
+            alembic_cfg.attributes["connection"] = conn
+            command.downgrade(alembic_cfg, "base")
+            command.upgrade(alembic_cfg, "head")
 
     def populate_users_table(self):
         with self.engine.begin() as conn:
-            conn.execute(
-                text(
-                    """
-                    INSERT INTO users(name, email, hashed_password, hash_salt, is_active, is_logged_in, role_id)
-                    VALUES ('user1','email_user1@email.com','hashed1','hash_salt1',True, True, 1),
-                           ('user2','email_user2@email.com','hashed2','hash_salt2',True, True, 2);
-                    """
-                )
+            self.users_table.to_sql(
+                "users", conn, if_exists="append", index=False
             )
-        # with self.engine.begin() as conn:
-        #     self.users_table.to_sql(
-        #         "users", conn, if_exists="append", index=False
-        #     )
