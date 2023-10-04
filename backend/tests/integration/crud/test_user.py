@@ -1,7 +1,7 @@
 import httpx
 import pytest
 
-USER_ROUTER_URL: str = "/user"
+from src.constants import USER_ROUTER_URL
 
 
 @pytest.fixture

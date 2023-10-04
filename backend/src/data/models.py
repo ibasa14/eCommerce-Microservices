@@ -48,7 +48,6 @@ class User(SqlAlchemyBase):  # type: ignore
     orders = relationship("Order", back_populates="user", cascade="all, delete")  # type: ignore
 
 
-
 class Role(SqlAlchemyBase):  # type: ignore
     __tablename__: str = "roles"
     id: Column[Integer] = Column(
@@ -56,7 +55,6 @@ class Role(SqlAlchemyBase):  # type: ignore
     )  # type: ignore
     name: Column[Enum] = Column(String, nullable=False)  # type: ignore
     users = relationship("User", back_populates="role", uselist=False, cascade="all, delete")  # type: ignore
-
 
 
 class Product(SqlAlchemyBase):  # type: ignore
@@ -75,6 +73,17 @@ class Product(SqlAlchemyBase):  # type: ignore
         "Category", back_populates="products"
     )  # type: ignore
     order_detail = relationship("OrderDetail", uselist=False)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "picture": self.picture,
+            "price": self.price,
+            "stock": self.stock,
+            "category_id": self.category_id,
+        }
 
 
 class Category(SqlAlchemyBase):  # type: ignore

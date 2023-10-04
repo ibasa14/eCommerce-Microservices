@@ -1,5 +1,4 @@
 import fastapi
-import pydantic
 from typing import List, Dict
 from src.api.dependencies.repository import get_repository
 import src.data.schemas.user as UserSchema
@@ -7,12 +6,11 @@ from src.data.models import User
 from src.crud.user import UserCRUD
 from src.utilities.exceptions.database import EntityDoesNotExist
 from src.utilities.exceptions.http.exc_404 import (
-    http_404_exc_email_not_found_request,
     http_404_exc_id_not_found_request,
-    http_404_exc_username_not_found_request,
 )
+from src.constants import USER_ROUTER_URL
 
-router = fastapi.APIRouter(prefix="/user", tags=["user"])
+router = fastapi.APIRouter(prefix=USER_ROUTER_URL, tags=["user"])
 
 
 @router.get(

@@ -24,7 +24,7 @@ def event_loop():
 @pytest.fixture(scope="session", autouse=True)
 def test_db() -> None:
     init_db = InitDB()
-    init_db.populate_users_table()
+    init_db.populate_db()
 
 
 @pytest.fixture(scope="session")

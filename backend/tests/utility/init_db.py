@@ -33,6 +33,19 @@ class InitDB:
         df = pd.DataFrame(data)
         return df
 
+    @property
+    def products_table(self):
+        data = {
+            "name": ["product1", "product2"],
+            "picture": ["not_defined.png"] * 2,
+            "description": ["description1", "description2"],
+            "price": [59.99, 22],
+            "stock": [100, 5],
+            "category_id": [1, 2],
+        }
+        df = pd.DataFrame(data)
+        return df
+
     def _clean_db_to_definition(self) -> None:
         alembic_cfg = Config(self.ini_path)
         alembic_cfg.set_main_option("script_location", self.alembic_directory)
@@ -42,8 +55,13 @@ class InitDB:
             command.downgrade(alembic_cfg, "base")
             command.upgrade(alembic_cfg, "head")
 
-    def populate_users_table(self):
+    def populate_db(self):
         with self.engine.begin() as conn:
+            # populate users
             self.users_table.to_sql(
                 "users", conn, if_exists="append", index=False
+            )
+            # populate products
+            self.products_table.to_sql(
+                "products", conn, if_exists="append", index=False
             )
