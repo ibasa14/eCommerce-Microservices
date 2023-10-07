@@ -119,6 +119,14 @@ class Order(SqlAlchemyBase):  # type: ignore
         cascade="all, delete",
     )  # type: ignore
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "date": self.date,
+            "total": self.total,
+        }
+
 
 class OrderDetail(SqlAlchemyBase):  # type: ignore
     __tablename__: str = "order_details"
@@ -141,3 +149,12 @@ class OrderDetail(SqlAlchemyBase):  # type: ignore
     __table_args__: Tuple[CheckConstraint] = (
         CheckConstraint(quantity > 0, name="check_quantity_positive"),
     )  # type: ignore
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "product_id": self.product_id,
+            "order_id": self.order_id,
+            "quantity": self.quantity,
+            "total": self.total,
+        }

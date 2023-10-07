@@ -1,5 +1,5 @@
 from src.config.manager import settings
-from sqlalchemy import create_engine, Engine
+from sqlalchemy import create_engine, Engine, text
 import pandas as pd
 from alembic.config import Config
 from alembic import command
@@ -36,12 +36,12 @@ class InitDB:
     @property
     def products_table(self):
         data = {
-            "name": ["product1", "product2"],
-            "picture": ["not_defined.png"] * 2,
-            "description": ["description1", "description2"],
-            "price": [59.99, 22],
-            "stock": [100, 5],
-            "category_id": [1, 2],
+            "name": ["product1", "product2", "product_22"],
+            "picture": ["not_defined.png"] * 3,
+            "description": ["description1", "description2", "description22"],
+            "price": [59.99, 22, 92.59],
+            "stock": [100, 5, 200],
+            "category_id": [1, 2, 3],
         }
         df = pd.DataFrame(data)
         return df

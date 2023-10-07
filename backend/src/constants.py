@@ -1,3 +1,5 @@
 DEFAULT_PNG_NAME = "not_defined.png"
 PRODUCT_ROUTER_URL = "/product"
 USER_ROUTER_URL = "/user"
+ORDER_DETAIL_ROUTER_URL = "/order_details"
+ORDER_ROUTER_URL = "/order"

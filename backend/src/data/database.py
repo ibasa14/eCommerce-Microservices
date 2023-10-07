@@ -26,7 +26,7 @@ class AsyncDatabase:
             )
         )
         self.async_session: SQLAlchemyAsyncSession = SQLAlchemyAsyncSession(
-            bind=self.async_engine
+            bind=self.async_engine, 
         )
         self.pool: SQLAlchemyPool = self.async_engine.pool
 
@@ -47,5 +47,3 @@ class AsyncDatabase:
 async_db: AsyncDatabase = AsyncDatabase()
 
 SqlAlchemyBase = declarative_base()
-
-from .models import Product, Role, User

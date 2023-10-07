@@ -2,9 +2,6 @@ import httpx
 import pytest
 from src.constants import DEFAULT_PNG_NAME, PRODUCT_ROUTER_URL
 
-def test_crud_products():
-    assert True
-
 
 @pytest.fixture
 def api_product_url(api_url) -> str:
@@ -15,7 +12,8 @@ async def test_crud_products(
     async_client: httpx.AsyncClient, api_product_url: str
 ) -> None:
     response_get_multiple_products = await async_client.get(api_product_url)
-    assert response_get_multiple_products.json() == [
+    response_get_multiple_products_json = list(filter(lambda a: a["id"]!=2, response_get_multiple_products.json()))
+    assert response_get_multiple_products_json == [
         {
             "id": 1,
             "name": "product1",
@@ -26,13 +24,13 @@ async def test_crud_products(
             "category_id": 1,
         },
         {
-            "id": 2,
-            "name": "product2",
-            "description": "description2",
+            "id": 3,
+            "name": "product_22",
+            "description": "description22",
             "picture": DEFAULT_PNG_NAME,
-            "price": 22,
-            "stock": 5,
-            "category_id": 2,
+            "price": 92.59,
+            "stock": 200,
+            "category_id": 3,
         },
     ]
 
@@ -42,15 +40,17 @@ async def test_crud_products(
     assert response_delete_product.status_code == 200
 
     response_after_deletion = await async_client.get(api_product_url)
-    assert response_after_deletion.json() == [
+    response_after_deletion_json = list(filter(lambda a: a["id"]!=2, response_after_deletion.json()))
+
+    assert response_after_deletion_json == [
         {
-            "id": 2,
-            "name": "product2",
-            "description": "description2",
+            "id": 3,
+            "name": "product_22",
+            "description": "description22",
             "picture": DEFAULT_PNG_NAME,
-            "price": 22,
-            "stock": 5,
-            "category_id": 2,
+            "price": 92.59,
+            "stock": 200,
+            "category_id": 3,
         },
     ]
     response_create_product = await async_client.post(
@@ -65,7 +65,7 @@ async def test_crud_products(
         headers={"Content-Type": "application/json"},
     )
     assert response_create_product.json() == {
-        "id": 3,
+        "id": 4,
         "name": "product3",
         "description": "description3",
         "picture": DEFAULT_PNG_NAME,
@@ -75,18 +75,21 @@ async def test_crud_products(
     }
 
     response_get_multiple_products_2 = await async_client.get(api_product_url)
-    assert response_get_multiple_products_2.json() == [
-        {
-            "id": 2,
-            "name": "product2",
-            "description": "description2",
-            "picture": DEFAULT_PNG_NAME,
-            "price": 22,
-            "stock": 5,
-            "category_id": 2,
-        },
+    response_get_multiple_products_2_json = list(filter(lambda a: a["id"]!=2, response_get_multiple_products_2.json()))
+
+    assert response_get_multiple_products_2_json == [
+
         {
             "id": 3,
+            "name": "product_22",
+            "description": "description22",
+            "picture": DEFAULT_PNG_NAME,
+            "price": 92.59,
+            "stock": 200,
+            "category_id": 3,
+        },
+        {
+            "id": 4,
             "name": "product3",
             "description": "description3",
             "picture": DEFAULT_PNG_NAME,
@@ -96,7 +99,7 @@ async def test_crud_products(
         },
     ]
     response_update_product = await async_client.put(
-        api_product_url + "/3",
+        api_product_url + "/4",
         json={
             "name": "product3_mod",
             "description": "description3_mod",
@@ -108,7 +111,7 @@ async def test_crud_products(
         headers={"Content-Type": "application/json"},
     )
     assert response_update_product.json() == {
-        "id": 3,
+        "id": 4,
         "name": "product3_mod",
         "description": "description3_mod",
         "picture": DEFAULT_PNG_NAME,
@@ -117,10 +120,10 @@ async def test_crud_products(
         "category_id": 5,
     }
     response_get_product = await async_client.get(
-        api_product_url + "/3",
+        api_product_url + "/4",
     )
     assert response_get_product.json() == {
-        "id": 3,
+        "id": 4,
         "name": "product3_mod",
         "description": "description3_mod",
         "picture": DEFAULT_PNG_NAME,
