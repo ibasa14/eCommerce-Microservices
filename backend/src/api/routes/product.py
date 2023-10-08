@@ -9,8 +9,20 @@ from src.utilities.exceptions.http.exc_404 import (
     http_404_exc_id_not_found_request,
 )
 from src.constants import PRODUCT_ROUTER_URL
+from typing import Annotated
+from enum import Enum
 
 router = fastapi.APIRouter(prefix=PRODUCT_ROUTER_URL, tags=["product"])
+
+
+class OrderingEnum(str, Enum):
+    name = "name"
+    price = "price"
+
+
+class OrderingType(str, Enum):
+    asc = "asc"
+    desc = "desc"
 
 
 @router.get(
@@ -23,8 +35,48 @@ async def get_multiple_product(
     product_crud: ProductCRUD = fastapi.Depends(
         get_repository(repo_type=ProductCRUD, model=Product)
     ),
+    categories: Annotated[
+        str,
+        fastapi.Query(
+            title="Product Category",
+            description="Identifier for the specific category",
+            example="1,2,3",
+        ),
+    ] = None,
+    order_by: Annotated[
+        OrderingEnum,
+        fastapi.Query(
+            title="Product ordering",
+            description="Set the parameter use to order",
+        ),
+    ] = None,
+    order_type: Annotated[
+        OrderingType,
+        fastapi.Query(
+            title="Product ordering type",
+            description="Set the ordering approach",
+        ),
+    ] = None,
+    min_cost: Annotated[
+        float,
+        fastapi.Query(
+            title="Min Cost", description="Set the minimum cost", ge=0
+        ),
+    ] = None,
+    max_cost: Annotated[
+        float,
+        fastapi.Query(
+            title="Max Cost", description="Set the maximum cost", ge=0
+        ),
+    ] = None,
 ) -> List[ProductSchema.ProductInResponse]:
-    db_products = await product_crud.get_multiple()
+    db_products = await product_crud.get_multiple(
+        categories=categories,
+        order_by=order_by,
+        order_type=order_type,
+        min_cost=min_cost,
+        max_cost=max_cost,
+    )
     db_products_list: list = list()
 
     for db_product in db_products:

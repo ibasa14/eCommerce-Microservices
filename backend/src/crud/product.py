@@ -7,19 +7,36 @@ from src.data.schemas.product import (
     ProductInResponse,
 )
 from src.crud.base import BaseCRUD
-from src.securities.hashing.password import password_generator
-
-from src.securities.verification.credentials import credential_verifier
 
 from src.utilities.exceptions.database import (
-    EntityAlreadyExists,
     EntityDoesNotExist,
 )
 
-from src.utilities.exceptions.password import PasswordDoesNotMatch
+from typing import Optional, Sequence
 
 
 class ProductCRUD(BaseCRUD):
+    async def get_multiple(
+        self,
+        categories: str = None,
+        order_by: str = None,
+        order_type: str = "asc",
+        min_cost: float = None,
+        max_cost: float = None,
+    ) -> Optional[Sequence[Product]]:
+        stmt = sqlalchemy.select(Product)
+        if categories:
+            stmt = stmt.filter(Product.category_id.in_(categories.split(",")))
+        if min_cost:
+            stmt = stmt.filter(Product.price >= min_cost)
+        if max_cost:
+            stmt = stmt.filter(Product.price <= max_cost)
+        if order_by:
+            stmt = stmt.order_by(sqlalchemy.text(f"{order_by} {order_type}"))
+
+        query = await self.async_session.execute(statement=stmt)
+        return query.scalars().all()
+
     async def create_product(
         self, product_create: ProductInCreate
     ) -> ProductInResponse:
