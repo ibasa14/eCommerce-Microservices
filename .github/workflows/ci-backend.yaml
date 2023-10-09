@@ -1,11 +1,6 @@
 name: "CI - Backend"
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - "feature/**"
-      - "fix/**"
-      - "main"
   pull_request:
     branches:
       - "feature/**"
@@ -13,8 +8,33 @@ on:
       - "main"
 
 jobs:
+  db_build:
+    name: "Build DB"
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    services:
+      db:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: ${{ vars.POSTGRES_DB }}
+          POSTGRES_USER: ${{ vars.POSTGRES_USERNAME }}
+          POSTGRES_PASSWORD: ${{ vars.POSTGRES_PASSWORD }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Check repository
+        uses: actions/checkout@v3
   build:
     name: "Build 🏗"
+    needs: db_build
     strategy:
       matrix:
         os:
@@ -101,20 +121,6 @@ jobs:
     defaults:
       run:
         working-directory: backend/
-    services:
-      db:
-        image: postgres:latest
-        env:
-          POSTGRES_DB: ${{ vars.POSTGRES_DB }}
-          POSTGRES_USER: ${{ vars.POSTGRES_USERNAME }}
-          POSTGRES_PASSWORD: ${{ vars.POSTGRES_PASSWORD }}
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     env:
       ENVIRONMENT: ${{ vars.ENVIRONMENT }}
       DEBUG: ${{ vars.DEBUG }}
