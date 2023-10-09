@@ -18,21 +18,24 @@ from typing import Optional, Sequence
 class ProductCRUD(BaseCRUD):
     async def get_multiple(
         self,
-        categories: str = None,
-        order_by: str = None,
-        order_type: str = "asc",
-        min_cost: float = None,
-        max_cost: float = None,
+        categories: str | None,
+        order_by: str | None,
+        order_type: str,
+        min_cost: float | None,
+        max_cost: float | None,
     ) -> Optional[Sequence[Product]]:
         stmt = sqlalchemy.select(Product)
         if categories:
-            stmt = stmt.filter(Product.category_id.in_(categories.split(",")))
+            categories_list = [int(cat) for cat in categories.split(",")]
+            stmt = stmt.filter(Product.category_id.in_(categories_list))
         if min_cost:
             stmt = stmt.filter(Product.price >= min_cost)
         if max_cost:
             stmt = stmt.filter(Product.price <= max_cost)
         if order_by:
-            stmt = stmt.order_by(sqlalchemy.text(f"{order_by} {order_type}"))
+            stmt = stmt.order_by(
+                getattr(getattr(Product, order_by), order_type)()
+            )
 
         query = await self.async_session.execute(statement=stmt)
         return query.scalars().all()

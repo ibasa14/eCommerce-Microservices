@@ -33,6 +33,19 @@ async def test_crud_products(
             "category_id": 3,
         },
     ]
+    response_get_multiple_products_query = await async_client.get(api_product_url, params={"min_cost":60, "max_cost":93, "order_by":"price", "categories":"3"})
+    response_get_multiple_products_query_json = list(filter(lambda a: a["id"]!=2, response_get_multiple_products_query.json()))
+    assert response_get_multiple_products_query_json == [
+        {
+            "id": 3,
+            "name": "product_22",
+            "description": "description22",
+            "picture": DEFAULT_PNG_NAME,
+            "price": 92.59,
+            "stock": 200,
+            "category_id": 3,
+        },
+    ]
 
     response_delete_product = await async_client.delete(
         api_product_url + "/1",

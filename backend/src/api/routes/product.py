@@ -56,7 +56,7 @@ async def get_multiple_product(
             title="Product ordering type",
             description="Set the ordering approach",
         ),
-    ] = None,
+    ] = OrderingType.asc,
     min_cost: Annotated[
         float,
         fastapi.Query(
