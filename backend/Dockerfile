@@ -1,5 +1,5 @@
-# Pull official latest Python Docker image (Pulished with version 3.11.0)
-FROM --platform=linux/amd64 python:latest
+# Pull official latest Python Docker image (Pulished with version 3.10.12)
+FROM --platform=linux/amd64 python:3.10.12
 
 # Set the working directory
 WORKDIR /usr/backend
@@ -39,4 +39,5 @@ RUN chmod +x /usr/backend/entrypoint.sh
 ENTRYPOINT ["/usr/backend/entrypoint.sh" ]
 
 # Start up the backend server
-CMD uvicorn src.main:app --reload --workers 4 --host 0.0.0.0 --port 8000
+# CMD uvicorn src.main:app --reload --workers 4 --host 0.0.0.0 --port 8000
+# CMD bash
