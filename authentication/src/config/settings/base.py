@@ -21,9 +21,9 @@ class AuthenticationBaseSettings(pydantic_settings.BaseSettings):
     REDOC_URL: str = "/redoc"
     OPENAPI_PREFIX: str = ""
 
-    DB_POSTGRES_HOST: str = config("POSTGRES_HOST_USER", cast=str)  # type: ignore
+    DB_POSTGRES_HOST: str = config("POSTGRES_HOST", cast=str)  # type: ignore
     DB_MAX_POOL_CON: int = config("DB_MAX_POOL_CON", cast=int)  # type: ignore
-    DB_POSTGRES_NAME: str = config("POSTGRES_DB_USER", cast=str)  # type: ignore
+    DB_POSTGRES_NAME: str = config("POSTGRES_DB", cast=str)  # type: ignore
     DB_POSTGRES_PASSWORD: str = config("POSTGRES_PASSWORD", cast=str)  # type: ignore
     DB_POOL_SIZE: int = config("DB_POOL_SIZE", cast=int)  # type: ignore
     DB_POOL_OVERFLOW: int = config("DB_POOL_OVERFLOW", cast=int)  # type: ignore

@@ -14,7 +14,7 @@ RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Set the server port
-EXPOSE 8000
+EXPOSE 8002
 
 # Install system dependencies
 RUN apt-get update \
@@ -37,7 +37,3 @@ RUN chmod +x /usr/authentication/entrypoint.sh
 
 # Execute entrypoint.sh
 ENTRYPOINT ["/usr/authentication/entrypoint.sh" ]
-
-# Start up the authentication server
-# CMD uvicorn src.main:app --reload --workers 4 --host 0.0.0.0 --port 8000
-# CMD bash

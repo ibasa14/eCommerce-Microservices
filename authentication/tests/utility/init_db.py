@@ -6,11 +6,14 @@ from alembic import command
 from pathlib import Path
 import os
 from src.securities.hashing.password import password_generator
+from sqlalchemy_utils import database_exists, create_database
 
 
 class InitDB:
     def __init__(self):
         self.db_uri: str = f"{settings.DB_POSTGRES_SCHEMA}://{settings.DB_POSTGRES_USERNAME}:{settings.DB_POSTGRES_PASSWORD}@{settings.DB_POSTGRES_HOST}:{settings.DB_POSTGRES_PORT}/postgres_user_testing"
+        if not database_exists(self.db_uri):
+            create_database(self.db_uri)
         self.engine: Engine = create_engine(self.db_uri)
         self.alembic_directory = os.path.join(
             Path(__file__).parent.parent.parent.resolve(), "alembic"
