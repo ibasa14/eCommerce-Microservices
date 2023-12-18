@@ -37,7 +37,3 @@ RUN chmod +x /usr/product/entrypoint.sh
 
 # Execute entrypoint.sh
 ENTRYPOINT ["/usr/product/entrypoint.sh" ]
-
-# Start up the product server
-# CMD uvicorn src.main:app --reload --workers 4 --host 0.0.0.0 --port 8000
-# CMD bash
