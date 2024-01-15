@@ -77,9 +77,9 @@ services:
     volumes:
       - postgresql_user_db_data:/var/lib/postgresql/data/
     expose:
-      - 5434
+      - 5432
     ports:
-      - 5435:5434
+      - 5434:5432
 
   authentication:
     container_name: authentication
@@ -123,9 +123,9 @@ services:
     volumes:
       - ./authentication/:/usr/authentication/
     expose:
-      - 8002
+      - 8000
     ports:
-      - 8003:8002
+      - 8002:8000
     depends_on:
       - user_db
 
