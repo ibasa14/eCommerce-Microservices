@@ -2,7 +2,7 @@
 
 echo "DB Connection --- Establishing . . ."
 
-while ! nc -z $POSTGRES_HOST 5432; do
+while ! nc -z $POSTGRES_HOST $POSTGRES_PORT; do
 
     echo "DB Connection -- Failed!"
 
@@ -17,4 +17,4 @@ echo "DB Connection --- Successfully Established!"
 alembic upgrade head
 
 # Start up the product server
-uvicorn src.main:app --reload --workers 4 --host 0.0.0.0 --port 8000
+uvicorn src.main:app --reload --workers $SERVER_WORKERS --host 0.0.0.0 --port $SERVER_PORT

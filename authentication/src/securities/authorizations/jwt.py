@@ -47,28 +47,6 @@ class JWTGenerator:
             ),
         )
 
-    def retrieve_details_from_token(
-        self, token: str, secret_key: str
-    ) -> list[str]:
-        try:
-            payload = jose_jwt.decode(
-                token=token, key=secret_key, algorithms=[settings.JWT_ALGORITHM]
-            )
-            jwt_user = JWTUser(
-                username=payload["username"], email=payload["email"]
-            )
-
-        except JoseJWTError as token_decode_error:
-            raise ValueError(
-                "Unable to decode JWT Token"
-            ) from token_decode_error
-
-        except pydantic.ValidationError as validation_error:
-            raise ValueError("Invalid payload in token") from validation_error
-
-        return [jwt_user.name, jwt_user.email]
-
-
 def get_jwt_generator() -> JWTGenerator:
     return JWTGenerator()
 

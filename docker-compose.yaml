@@ -11,11 +11,12 @@ services:
       - POSTGRES_DB=${POSTGRES_DB_PRODUCT}
       - PGDATA=/var/lib/postgresql/data/
     volumes:
-      - postgresql_product_db_data:/var/lib/postgresql/data/
+      - ./dev/postgresql_product_db_data/:/var/lib/postgresql/data/
+      - ./dev/sql/:/var/lib/postgresql/sql
     expose:
-      - 5432
+      - ${POSTGRES_PORT_PRODUCT}
     ports:
-      - 5433:5432
+      - 5433:${POSTGRES_PORT_PRODUCT}
 
   product:
     container_name: product
@@ -30,12 +31,12 @@ services:
       - POSTGRES_DB=${POSTGRES_DB_PRODUCT}
       - POSTGRES_HOST=${POSTGRES_HOST_PRODUCT}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_PORT=${POSTGRES_PORT_PRODUCT}
       - POSTGRES_SCHEMA=${POSTGRES_SCHEMA}
       - POSTGRES_USERNAME=${POSTGRES_USERNAME}
-      - SERVER_HOST=${SERVER_HOST}
-      - SERVER_PORT=${SERVER_PORT}
-      - SERVER_WORKERS=${SERVER_WORKERS}
+      - SERVER_HOST=${PRODUCT_HOST}
+      - SERVER_PORT=${PRODUCT_PORT}
+      - SERVER_WORKERS=${PRODUCT_WORKERS}
       - DB_TIMEOUT=${DB_TIMEOUT}
       - DB_POOL_SIZE=${DB_POOL_SIZE}
       - DB_MAX_POOL_CON=${DB_MAX_POOL_CON}
@@ -59,27 +60,28 @@ services:
     volumes:
       - ./product/:/usr/product/
     expose:
-      - 8000
+      - ${PRODUCT_PORT}
     ports:
-      - 8001:8000
+      - 8001:${PRODUCT_PORT}
     depends_on:
       - product_db
 
-  user_db:
+  account_db:
     image: postgres:latest
-    container_name: user_db
+    container_name: account_db
     restart: always
     environment:
       - POSTGRES_USER=${POSTGRES_USERNAME}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB_USER=${POSTGRES_DB_USER}
+      - POSTGRES_DB=${POSTGRES_DB_ACCOUNT}
       - PGDATA=/var/lib/postgresql/data/
     volumes:
-      - postgresql_user_db_data:/var/lib/postgresql/data/
+      - ./dev/postgresql_account_db_data/:/var/lib/postgresql/data/
+      - ./dev/sql/:/var/lib/postgresql/sql
     expose:
-      - 5432
+      - ${POSTGRES_PORT_ACCOUNT}
     ports:
-      - 5434:5432
+      - 5435:${POSTGRES_PORT_ACCOUNT}
 
   authentication:
     container_name: authentication
@@ -91,15 +93,15 @@ services:
     environment:
       - ENVIRONMENT=${ENVIRONMENT}
       - DEBUG=${DEBUG}
-      - POSTGRES_DB=${POSTGRES_DB_USER}
-      - POSTGRES_HOST=${POSTGRES_HOST_USER}
+      - POSTGRES_DB=${POSTGRES_DB_ACCOUNT}
+      - POSTGRES_HOST=${POSTGRES_HOST_ACCOUNT}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_PORT=${POSTGRES_PORT_USER}
+      - POSTGRES_PORT=${POSTGRES_PORT_ACCOUNT}
       - POSTGRES_SCHEMA=${POSTGRES_SCHEMA}
       - POSTGRES_USERNAME=${POSTGRES_USERNAME}
-      - SERVER_HOST=${SERVER_HOST}
-      - SERVER_PORT=${SERVER_PORT}
-      - SERVER_WORKERS=${SERVER_WORKERS}
+      - SERVER_HOST=${AUTHENTICATION_HOST}
+      - SERVER_PORT=${AUTHENTICATION_PORT}
+      - SERVER_WORKERS=${AUTHENTICATION_WORKERS}
       - DB_TIMEOUT=${DB_TIMEOUT}
       - DB_POOL_SIZE=${DB_POOL_SIZE}
       - DB_MAX_POOL_CON=${DB_MAX_POOL_CON}
@@ -123,12 +125,12 @@ services:
     volumes:
       - ./authentication/:/usr/authentication/
     expose:
-      - 8000
+      - ${AUTHENTICATION_PORT}
     ports:
-      - 8002:8000
+      - 8003:${AUTHENTICATION_PORT}
     depends_on:
-      - user_db
+      - account_db
 
 volumes:
   postgresql_product_db_data:
-  postgresql_user_db_data:
+  postgresql_account_db_data:

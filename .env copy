@@ -1,26 +1,35 @@
 ENVIRONMENT=DEV
 DEBUG=True
 
-# SERVER
-SERVER_HOST=127.0.0.1
-SERVER_PORT=8000
-SERVER_WORKERS=4
+# Product microservice
+PRODUCT_HOST=127.0.0.1
+PRODUCT_PORT=8000
+PRODUCT_WORKERS=4
+
+# Authentication microservice
+AUTHENTICATION_HOST=127.0.0.1
+AUTHENTICATION_PORT=8002
+AUTHENTICATION_WORKERS=4
 
 # Database - Postgres
 POSTGRES_DB_PRODUCT=postgres_product
-POSTGRES_DB_USER=postgres_user
+POSTGRES_DB_ACCOUNT=postgres_account
 
+# This is the host for Docker Postgres Image in docker-compose.yaml
+POSTGRES_HOST_PRODUCT=product_db
+POSTGRES_HOST_ACCOUNT=account_db
+
+# Postgres Ports
+POSTGRES_PORT_PRODUCT=5432
+POSTGRES_PORT_ACCOUNT=5434
+
+# Common postgres config
 POSTGRES_PASSWORD=mysecurepassword
-POSTGRES_PORT=5432
 POSTGRES_SCHEMA=postgresql
 POSTGRES_USERNAME=postgres
 IS_ALLOWED_CREDENTIALS=True
 API_TOKEN=YOUR-API-TOKEN
 AUTH_TOKEN=YOUR-AUTHENTICATION-TOKEN
-
-# This is the host for Docker Postgres Image in docker-compose.yaml
-POSTGRES_HOST_PRODUCT=product_db
-POSTGRES_HOST_USER=user_db
 
 # Database - SQLAlchemy
 DB_TIMEOUT=5

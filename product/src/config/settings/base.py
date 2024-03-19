@@ -6,7 +6,7 @@ from decouple import config
 
 
 class ProductBaseSettings(pydantic_settings.BaseSettings):
-    TITLE: str = "IBC project"
+    TITLE: str = "IBC project - Products"
     VERSION: str = "0.1.0"
     TIMEZONE: str = "UTC+1"
     DESCRIPTION: str | None = None

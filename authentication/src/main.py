@@ -23,5 +23,3 @@ def initialize_authentication_application() -> fastapi.FastAPI:
 
 
 app: fastapi.FastAPI = initialize_authentication_application()
-
-app = fastapi.FastAPI()
