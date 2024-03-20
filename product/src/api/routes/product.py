@@ -40,7 +40,7 @@ async def get_multiple_product(
         fastapi.Query(
             title="Product Category",
             description="Identifier for the specific category",
-            example="1,2,3",
+            examples="1,2,3",
         ),
     ] = None,
     order_by: Annotated[

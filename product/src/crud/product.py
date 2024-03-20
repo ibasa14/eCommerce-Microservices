@@ -43,7 +43,7 @@ class ProductCRUD(BaseCRUD):
     async def create_product(
         self, product_create: ProductInCreate
     ) -> ProductInResponse:
-        new_product = Product(**product_create.dict(exclude_none=True))
+        new_product = Product(**product_create.model_dump(exclude_none=True))
         self.async_session.add(instance=new_product)
         await self.async_session.commit()
         await self.async_session.refresh(instance=new_product)
@@ -63,7 +63,7 @@ class ProductCRUD(BaseCRUD):
     async def update_product(
         self, id: int, product_update: ProductInUpdate
     ) -> Product:
-        new_product_data = product_update.dict(exclude_none=True)
+        new_product_data = product_update.model_dump(exclude_none=True)
 
         select_stmt = sqlalchemy.select(Product).where(Product.id == id)
         query = await self.async_session.execute(statement=select_stmt)

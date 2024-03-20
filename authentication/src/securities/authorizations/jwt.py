@@ -26,7 +26,7 @@ class JWTGenerator:
                 minutes=settings.JWT_MIN
             )
 
-        to_encode.update(JWToken(exp=expire, sub=settings.JWT_SUBJECT).dict())
+        to_encode.update(JWToken(exp=expire, sub=settings.JWT_SUBJECT).model_dump())
 
         return jose_jwt.encode(
             to_encode,
@@ -41,7 +41,7 @@ class JWTGenerator:
             )
 
         return self._generate_jwt_token(
-            jwt_data=JWTUser(username=user.name, email=user.email).dict(),  # type: ignore
+            jwt_data=JWTUser(username=user.name, email=user.email).model_dump(),  # type: ignore
             expires_delta=datetime.timedelta(
                 minutes=settings.JWT_ACCESS_TOKEN_EXPIRATION_TIME
             ),

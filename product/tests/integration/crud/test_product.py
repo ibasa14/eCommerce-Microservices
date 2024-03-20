@@ -7,7 +7,7 @@ from src.constants import DEFAULT_PNG_NAME, PRODUCT_ROUTER_URL
 def api_product_url(api_url) -> str:
     return f"{api_url}{PRODUCT_ROUTER_URL}"
 
-
+@pytest.mark.asyncio
 async def test_crud_products(
     async_client: httpx.AsyncClient, api_product_url: str
 ) -> None:

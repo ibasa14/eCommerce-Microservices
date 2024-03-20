@@ -2,7 +2,6 @@ import asgi_lifespan
 import fastapi
 import httpx
 import pytest
-from fastapi.testclient import TestClient
 from src.main import initialize_product_application
 import asyncio
 from tests.utility.init_db import InitDB
@@ -44,21 +43,11 @@ def product_test_app() -> fastapi.FastAPI:
     return testing_app
 
 
-@pytest.fixture(name="initialize_product_test_application")
-async def initialize_product_test_application(product_test_app: fastapi.FastAPI) -> fastapi.FastAPI:  # type: ignore
-    async with asgi_lifespan.LifespanManager(product_test_app):
-        yield product_test_app
-
-
-@pytest.fixture(name="async_client")
-async def async_client(initialize_product_test_application: fastapi.FastAPI) -> httpx.AsyncClient:  # type: ignore
-    async with httpx.AsyncClient(
-        app=initialize_product_test_application,
-        headers={"Content-Type": "application/json"},
-    ) as client:
-        yield client
-
-
 @pytest.fixture(scope="session")
-def sync_client(product_test_app: fastapi.FastAPI) -> TestClient:  # type: ignore
-    return TestClient(product_test_app)
+async def async_client(product_test_app: fastapi.FastAPI) -> httpx.AsyncClient:  # type: ignore
+    async with asgi_lifespan.LifespanManager(product_test_app):
+        async with httpx.AsyncClient(
+            app=product_test_app,
+            headers={"Content-Type": "application/json"},
+        ) as client:
+            yield client

@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import (
 )
 
 async_db_testing: AsyncDatabase = AsyncDatabase(
-    db_name="postgres_product_testing"
+    db_name="postgres_authentication_testing"
 )
 
 
