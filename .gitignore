@@ -167,3 +167,6 @@ cython_debug/
 
 #dev 
 dev/
+
+#prototypes in jupyter notebook
+*.ipynb

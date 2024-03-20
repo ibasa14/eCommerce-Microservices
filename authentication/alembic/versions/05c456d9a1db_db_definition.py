@@ -24,12 +24,31 @@ POPULATE_ROLE_TABLE: str = """
            ('client');
 """
 
+POPULATE_USER_TABLE: str = """
+    INSERT INTO users(id,
+                     name,
+                     email,
+                     hashed_password,
+                     is_active,
+                     is_logged_in,
+                     role_id)
+    VALUES (1,
+            'admin',
+            'admin@ibc.com',
+            '$2b$12$zX6L9xYc82wiy5VxE8igT.isAdFbYs7zwXddSfk/uaxmk/ot.CWae',
+            true,
+            false,
+            1);
+"""
 
-def populate_role() -> None:
+
+def populate_tables() -> None:
     op.execute(POPULATE_ROLE_TABLE)
+    op.execute(POPULATE_USER_TABLE)
 
 
 def clean_role() -> None:
+    op.execute("DELETE FROM users;")
     op.execute("DELETE FROM roles;")
 
 
@@ -47,9 +66,8 @@ def upgrade() -> None:
         sa.Column("name", sa.String(), nullable=False),
         sa.Column("email", sa.String(), nullable=True),
         sa.Column("hashed_password", sa.String(), nullable=True),
-        sa.Column("hash_salt", sa.String(), nullable=True),
         sa.Column("is_active", sa.Boolean(), nullable=False),
-        sa.Column("is_logged_id", sa.Boolean(), nullable=False),
+        sa.Column("is_logged_in", sa.Boolean(), nullable=False),
         sa.Column("role_id", sa.Integer(), nullable=True),
         sa.ForeignKeyConstraint(
             ["role_id"],
@@ -57,7 +75,7 @@ def upgrade() -> None:
         ),
         sa.PrimaryKeyConstraint("id"),
     )
-    populate_role()
+    populate_tables()
     # ### end Alembic commands ###
 
 

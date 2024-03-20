@@ -1,23 +1,23 @@
-from src.securities.hashing.hash import hash_generator
+from passlib.context import CryptContext
 
 
 class PasswordGenerator:
     @property
-    def generate_salt(self) -> str:
-        return hash_generator.generate_password_salt_hash
-
+    def context(self)->CryptContext:
+        return CryptContext(schemes=["bcrypt"], deprecated="auto")
+    
     def generate_hashed_password(
-        self, hash_salt: str, new_password: str
+        self, new_password: str
     ) -> str:
-        return hash_generator.generate_password_hash(
-            hash_salt=hash_salt, password=new_password
+        return self.context.hash(
+            new_password
         )
 
-    def is_password_authenticated(
-        self, hash_salt: str, password: str, hashed_password: str
+    def validate_password(
+        self, password: str, hashed_password: str
     ) -> bool:
-        return hash_generator.is_password_verified(
-            password=hash_salt + password, hashed_password=hashed_password
+        return self.context.verify(
+            password, hashed_password
         )
 
 

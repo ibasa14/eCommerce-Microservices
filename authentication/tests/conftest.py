@@ -4,6 +4,7 @@ import httpx
 import pytest
 from src.main import initialize_authentication_application
 import asyncio
+from tests.utility.init_db import InitDB
 from src.config.manager import settings
 from src.api.dependencies.session import get_async_session
 from tests.utility.session import get_async_session_testing
@@ -18,6 +19,10 @@ def event_loop():
     yield loop
     loop.close()
 
+@pytest.fixture(scope="session", autouse=True)
+def test_db() -> None:
+    init_db = InitDB()
+    init_db.populate_db()
 
 @pytest.fixture(scope="session")
 def api_url() -> str:
@@ -40,6 +45,5 @@ async def async_client(authentication_test_app: fastapi.FastAPI) -> httpx.AsyncC
     async with asgi_lifespan.LifespanManager(authentication_test_app):
         async with httpx.AsyncClient(
             app=authentication_test_app,
-            headers={"Content-Type": "application/json"},
         ) as client:
             yield client

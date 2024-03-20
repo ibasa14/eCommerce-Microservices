@@ -82,6 +82,7 @@ services:
       - ${POSTGRES_PORT_ACCOUNT}
     ports:
       - 5435:${POSTGRES_PORT_ACCOUNT}
+    command: -p ${POSTGRES_PORT_ACCOUNT}
 
   authentication:
     container_name: authentication

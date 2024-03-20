@@ -26,6 +26,7 @@ class UserInUpdate(BaseSchemaModel):
 
 
 class UserInLogin(BaseSchemaModel):
+    id: int
     email: str
     password: str
 
@@ -41,5 +42,4 @@ class UserWithToken(BaseSchemaModel):
 
 class UserInResponse(BaseSchemaModel):
     id: int
-    name: str
-    # authorized_account: UserWithToken
+    authorized_account: UserWithToken

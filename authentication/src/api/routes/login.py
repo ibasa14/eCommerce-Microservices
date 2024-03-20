@@ -25,13 +25,13 @@ async def login(
 ):
     try:
         db_user = await user_crud.read_user_by_password_authentication(
-            account_login=form_data
+            user_login=form_data
         )
 
     except Exception:
         raise await http_exc_400_credentials_bad_signin_request()
 
-    access_token = jwt_generator.generate_access_token(account=db_user)
+    access_token = jwt_generator.generate_access_token(user=db_user)
 
     return UserSchema.UserInResponse(
         id=db_user.id,
@@ -40,6 +40,7 @@ async def login(
             name=db_user.name,
             email=db_user.email,  # type: ignore
             is_active=db_user.is_active,
+            is_logged_in=db_user.is_logged_in,
             role_id=db_user.role_id,
         ),
     )

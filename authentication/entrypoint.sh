@@ -16,4 +16,5 @@ echo "DB Connection --- Successfully Established!"
 
 alembic upgrade head
 
+# Start up the authentication server
 uvicorn src.main:app --reload --workers $SERVER_WORKERS --host 0.0.0.0 --port $SERVER_PORT

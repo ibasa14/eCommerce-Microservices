@@ -9,5 +9,5 @@ class JWToken(pydantic.BaseModel):
 
 
 class JWTUser(pydantic.BaseModel):
-    name: str
+    username: str
     email: pydantic.EmailStr

@@ -76,7 +76,7 @@ class UserCRUD(BaseCRUD):
         if not db_user:
             raise EntityDoesNotExist("Wrong email!")
 
-        if not password_generator.is_password_authenticated(hash_salt=db_user.hash_salt, password=user_login.password, hashed_password=db_user.hashed_password):  # type: ignore
+        if not password_generator.validate_password(password=user_login.password, hashed_password=db_user.hashed_password):  # type: ignore
             raise PasswordDoesNotMatch("Password does not match!")
 
         return db_user  # type: ignore
