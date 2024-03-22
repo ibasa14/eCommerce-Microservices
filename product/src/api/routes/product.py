@@ -1,7 +1,9 @@
 import fastapi
 from typing import List, Dict
 from src.api.dependencies.repository import get_repository
+from src.api.dependencies.authentication import get_current_active_user
 import src.data.schemas.product as ProductSchema
+import src.data.schemas.user as UserSchema
 from src.data.models import Product
 from src.crud.product import ProductCRUD
 from src.utilities.exceptions.database import EntityDoesNotExist
@@ -32,6 +34,10 @@ class OrderingType(str, Enum):
     status_code=fastapi.status.HTTP_200_OK,
 )
 async def get_multiple_product(
+    current_user: Annotated[
+        UserSchema.User,
+        fastapi.Security(get_current_active_user, scopes=["product:read"]),
+    ],
     product_crud: ProductCRUD = fastapi.Depends(
         get_repository(repo_type=ProductCRUD, model=Product)
     ),
@@ -94,6 +100,10 @@ async def get_multiple_product(
 )
 async def get_product(
     id: int,
+    current_user: Annotated[
+        UserSchema.User,
+        fastapi.Security(get_current_active_user, scopes=["product:read"]),
+    ],
     product_crud: ProductCRUD = fastapi.Depends(
         get_repository(repo_type=ProductCRUD, model=Product)
     ),
@@ -115,6 +125,10 @@ async def get_product(
 )
 async def create_product(
     product_create: ProductSchema.ProductInCreate,
+    current_user: Annotated[
+        UserSchema.User,
+        fastapi.Security(get_current_active_user, scopes=["product:create"]),
+    ],
     product_crud: ProductCRUD = fastapi.Depends(
         get_repository(repo_type=ProductCRUD, model=Product)
     ),
@@ -135,6 +149,10 @@ async def create_product(
 async def update_product(
     id: int,
     product_in_update: ProductSchema.ProductInUpdate,
+    current_user: Annotated[
+        UserSchema.User,
+        fastapi.Security(get_current_active_user, scopes=["product:update"]),
+    ],
     product_crud: ProductCRUD = fastapi.Depends(
         get_repository(repo_type=ProductCRUD, model=Product)
     ),
@@ -157,6 +175,10 @@ async def update_product(
 )
 async def delete_product(
     id: int,
+    current_user: Annotated[
+        UserSchema.User,
+        fastapi.Security(get_current_active_user, scopes=["product:delete"]),
+    ],
     product_crud: ProductCRUD = fastapi.Depends(
         get_repository(repo_type=ProductCRUD, model=Product)
     ),

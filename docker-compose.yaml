@@ -16,7 +16,7 @@ services:
     expose:
       - ${POSTGRES_PORT_PRODUCT}
     ports:
-      - 5433:${POSTGRES_PORT_PRODUCT}
+      - ${POSTGRES_PORT_PRODUCT_EXT}:${POSTGRES_PORT_PRODUCT}
 
   product:
     container_name: product
@@ -37,6 +37,11 @@ services:
       - SERVER_HOST=${PRODUCT_HOST}
       - SERVER_PORT=${PRODUCT_PORT}
       - SERVER_WORKERS=${PRODUCT_WORKERS}
+      - AUTHENTICATION_HOST=${AUTHENTICATION_HOST}
+      - AUTHENTICATION_PORT=${AUTHENTICATION_PORT}
+      - AUTHENTICATION_PORT_EXT=${AUTHENTICATION_PORT_EXT}
+      - AUTHENTICATION_ENDPOINT=${AUTHENTICATION_ENDPOINT}
+      - AUTHENTICATION_ROUTER=${AUTHENTICATION_ROUTER}
       - DB_TIMEOUT=${DB_TIMEOUT}
       - DB_POOL_SIZE=${DB_POOL_SIZE}
       - DB_MAX_POOL_CON=${DB_MAX_POOL_CON}
@@ -48,21 +53,16 @@ services:
       - API_TOKEN=${API_TOKEN}
       - AUTH_TOKEN=${AUTH_TOKEN}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
-      - JWT_SUBJECT=${JWT_SUBJECT}
-      - JWT_TOKEN_PREFIX=${JWT_TOKEN_PREFIX}
       - JWT_ALGORITHM=${JWT_ALGORITHM}
       - JWT_MIN=${JWT_MIN}
       - JWT_HOUR=${JWT_HOUR}
       - JWT_DAY=${JWT_DAY}
-      - HASHING_ALGORITHM_LAYER_1=${HASHING_ALGORITHM_LAYER_1}
-      - HASHING_ALGORITHM_LAYER_2=${HASHING_ALGORITHM_LAYER_2}
-      - HASHING_SALT=${HASHING_SALT}
     volumes:
       - ./product/:/usr/product/
     expose:
       - ${PRODUCT_PORT}
     ports:
-      - 8001:${PRODUCT_PORT}
+      - ${PRODUCT_PORT_EXT}:${PRODUCT_PORT}
     depends_on:
       - product_db
 
@@ -81,15 +81,15 @@ services:
     expose:
       - ${POSTGRES_PORT_ACCOUNT}
     ports:
-      - 5435:${POSTGRES_PORT_ACCOUNT}
+      - ${POSTGRES_PORT_ACCOUNT_EXT}:${POSTGRES_PORT_ACCOUNT}
     command: -p ${POSTGRES_PORT_ACCOUNT}
 
-  authentication:
-    container_name: authentication
+  account:
+    container_name: account
     restart: always
     build:
       dockerfile: Dockerfile
-      context: ./authentication/
+      context: ./account/
     command: tail -F anything
     environment:
       - ENVIRONMENT=${ENVIRONMENT}
@@ -114,21 +114,17 @@ services:
       - API_TOKEN=${API_TOKEN}
       - AUTH_TOKEN=${AUTH_TOKEN}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
-      - JWT_SUBJECT=${JWT_SUBJECT}
-      - JWT_TOKEN_PREFIX=${JWT_TOKEN_PREFIX}
       - JWT_ALGORITHM=${JWT_ALGORITHM}
       - JWT_MIN=${JWT_MIN}
       - JWT_HOUR=${JWT_HOUR}
       - JWT_DAY=${JWT_DAY}
-      - HASHING_ALGORITHM_LAYER_1=${HASHING_ALGORITHM_LAYER_1}
-      - HASHING_ALGORITHM_LAYER_2=${HASHING_ALGORITHM_LAYER_2}
-      - HASHING_SALT=${HASHING_SALT}
+      - HASHING_ALGORITHM=${HASHING_ALGORITHM}
     volumes:
-      - ./authentication/:/usr/authentication/
+      - ./account/:/usr/account/
     expose:
       - ${AUTHENTICATION_PORT}
     ports:
-      - 8003:${AUTHENTICATION_PORT}
+      - ${AUTHENTICATION_PORT_EXT}:${AUTHENTICATION_PORT}
     depends_on:
       - account_db
 

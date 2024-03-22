@@ -2,7 +2,7 @@
 FROM --platform=linux/amd64 python:3.10.12
 
 # Set the working directory
-WORKDIR /usr/product
+WORKDIR /usr/account
 
 # Set up Python behaviour
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -33,7 +33,7 @@ COPY . .
 
 # Copy entrypoint.sh for auto connection with account_db service
 COPY ./entrypoint.sh .
-RUN chmod +x /usr/product/entrypoint.sh
+RUN chmod +x /usr/account/entrypoint.sh
 
 # Execute entrypoint.sh
-ENTRYPOINT ["/usr/product/entrypoint.sh" ]
+ENTRYPOINT ["/usr/account/entrypoint.sh" ]

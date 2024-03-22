@@ -1,11 +1,12 @@
 import datetime
 
 import pydantic
+from typing import Optional
 
 
 class JWToken(pydantic.BaseModel):
     exp: datetime.datetime
-    sub: str
+    sub: Optional[str] = ""  # Cannot be None
 
 
 class JWTUser(pydantic.BaseModel):

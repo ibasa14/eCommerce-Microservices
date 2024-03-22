@@ -144,8 +144,6 @@
 #       API_TOKEN: ${{ vars.API_TOKEN }}
 #       AUTH_TOKEN: ${{ vars.AUTH_TOKEN }}
 #       JWT_SECRET_KEY: ${{ vars.JWT_SECRET_KEY }}
-#       JWT_SUBJECT: ${{ vars.JWT_SUBJECT }}
-#       JWT_TOKEN_PREFIX: ${{ vars.JWT_TOKEN_PREFIX }}
 #       JWT_ALGORITHM: ${{ vars.JWT_ALGORITHM }}
 #       JWT_MIN: ${{ vars.JWT_MIN }}
 #       JWT_HOUR: ${{ vars.JWT_HOUR }}

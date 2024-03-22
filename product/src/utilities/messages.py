@@ -24,6 +24,10 @@ def http_403_forbidden_details() -> str:
     return "Refused access to the requested resource!"
 
 
+def http_403_not_active_account() -> str:
+    return "Account is not active!"
+
+
 def http_404_id_details(id: int) -> str:
     return f"Either the account with id `{id}` doesn't exist, has been deleted, or you are not authorized!"
 

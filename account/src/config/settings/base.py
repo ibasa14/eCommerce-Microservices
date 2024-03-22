@@ -5,8 +5,8 @@ import pydantic_settings
 from decouple import config
 
 
-class ProductBaseSettings(pydantic_settings.BaseSettings):
-    TITLE: str = "IBC project - Products"
+class AuthenticationBaseSettings(pydantic_settings.BaseSettings):
+    TITLE: str = "IBC Project - Authentication"
     VERSION: str = "0.1.0"
     TIMEZONE: str = "UTC+1"
     DESCRIPTION: str | None = None
@@ -46,24 +46,23 @@ class ProductBaseSettings(pydantic_settings.BaseSettings):
     JWT_ACCESS_TOKEN_EXPIRATION_TIME: int = JWT_MIN * JWT_HOUR * JWT_DAY
 
     IS_ALLOWED_CREDENTIALS: bool = config("IS_ALLOWED_CREDENTIALS", cast=bool)  # type: ignore
-    ALLOWED_ORIGINS: list[str] = []
+    ALLOWED_ORIGINS: list[str] = [
+        "http://localhost:8000",  # Product microservice
+        "http://localhost:8001",
+    ]
     ALLOWED_METHODS: list[str] = ["*"]
     ALLOWED_HEADERS: list[str] = ["*"]
 
     LOGGING_LEVEL: int = logging.INFO
     LOGGERS: tuple[str, str] = ("uvicorn.asgi", "uvicorn.access")
 
-    AUTHENTICATION_PORT: str = config("AUTHENTICATION_PORT", cast=str)  # type: ignore
-    AUTHENTICATION_PORT_EXT: str = config("AUTHENTICATION_PORT_EXT", cast=str)  # type: ignore
-    AUTHENTICATION_HOST: str = config("AUTHENTICATION_HOST", cast=str)  # type: ignore
-    AUTHENTICATION_ROUTER: str = config("AUTHENTICATION_ROUTER", cast=str)  # type: ignore
-    AUTHENTICATION_ENDPOINT: str = config("AUTHENTICATION_ENDPOINT", cast=str)  # type: ignore
-    AUTHENTICATION_URL: str = (
-        f"http://{AUTHENTICATION_HOST}:{AUTHENTICATION_PORT_EXT}/api{AUTHENTICATION_ROUTER}{AUTHENTICATION_ENDPOINT}"
-    )
+    HASHING_ALGORITHM: str = config("HASHING_ALGORITHM", cast=str)  # type: ignore
 
     @property
-    def set_product_app_attributes(self) -> dict[str, str | bool | None]:
+    def set_account_app_attributes(self) -> dict[str, str | bool | None]:
+        """
+        Set all `FastAPI` class' attributes with the custom values defined in `AuthenticationBaseSettings`.
+        """
         return {
             "title": self.TITLE,
             "version": self.VERSION,
