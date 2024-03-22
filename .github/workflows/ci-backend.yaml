@@ -1,181 +1,178 @@
-name: "CI - Backend"
-on:
-  workflow_dispatch:
-  pull_request:
-    branches:
-      - "feature/**"
-      - "fix/**"
-      - "main"
+# name: "CI - Backend"
+# on:
+#   workflow_dispatch:
+#   pull_request:
+#     branches:
+#       - "feature/**"
+#       - "fix/**"
+#       - "main"
 
-jobs:
-  db_build:
-    name: "Build DB"
-    strategy:
-      matrix:
-        os:
-          - ubuntu-latest
-    runs-on: ${{ matrix.os }}
-    services:
-      db:
-        image: postgres:latest
-        env:
-          POSTGRES_DB: ${{ vars.POSTGRES_DB }}
-          POSTGRES_USER: ${{ vars.POSTGRES_USERNAME }}
-          POSTGRES_PASSWORD: ${{ vars.POSTGRES_PASSWORD }}
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-    steps:
-      - name: Check repository
-        uses: actions/checkout@v3
-  build:
-    name: "Build 🏗"
-    needs: db_build
-    strategy:
-      matrix:
-        os:
-          - ubuntu-latest
-        python-version:
-          - "3.10"
-    defaults:
-      run:
-        working-directory: backend/
-    runs-on: ${{ matrix.os }}
-    steps:
-      - name: Check repository
-        uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-          cache: "pip"
-      - name: Display Python version
-        run: python -c "import sys; print(sys.version)"
-      - name: Install depenencies
-        run: |
-          python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+# jobs:
+#   db_build:
+#     name: "Build DB"
+#     strategy:
+#       matrix:
+#         os:
+#           - ubuntu-latest
+#     runs-on: ${{ matrix.os }}
+#     services:
+#       db:
+#         image: postgres:latest
+#         env:
+#           POSTGRES_DB: ${{ vars.POSTGRES_DB }}
+#           POSTGRES_USER: ${{ vars.POSTGRES_USERNAME }}
+#           POSTGRES_PASSWORD: ${{ vars.POSTGRES_PASSWORD }}
+#         ports:
+#           - 5432:5432
+#         options: >-
+#           --health-cmd pg_isready
+#           --health-interval 10s
+#           --health-timeout 5s
+#           --health-retries 5
+#     steps:
+#       - name: Check repository
+#         uses: actions/checkout@v3
+#   build:
+#     name: "Build 🏗"
+#     needs: db_build
+#     strategy:
+#       matrix:
+#         os:
+#           - ubuntu-latest
+#         python-version:
+#           - "3.10"
+#     defaults:
+#       run:
+#         working-directory: backend/
+#     runs-on: ${{ matrix.os }}
+#     steps:
+#       - name: Check repository
+#         uses: actions/checkout@v3
+#       - name: Set up Python ${{ matrix.python-version }}
+#         uses: actions/setup-python@v4
+#         with:
+#           python-version: ${{ matrix.python-version }}
+#           cache: "pip"
+#       - name: Display Python version
+#         run: python -c "import sys; print(sys.version)"
+#       - name: Install depenencies
+#         run: |
+#           python -m pip install --upgrade pip
+#           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-  code-quality:
-    name: "Code-Quality 💎"
-    needs: build
-    strategy:
-      matrix:
-        os:
-          - ubuntu-latest
-        python-version:
-          - "3.10"
-    defaults:
-      run:
-        working-directory: backend/
-    runs-on: ${{ matrix.os }}
+#   code-quality:
+#     name: "Code-Quality 💎"
+#     needs: build
+#     strategy:
+#       matrix:
+#         os:
+#           - ubuntu-latest
+#         python-version:
+#           - "3.10"
+#     defaults:
+#       run:
+#         working-directory: backend/
+#     runs-on: ${{ matrix.os }}
 
-    steps:
-      - name: Check repository
-        uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-          cache: "pip"
-      - name: Display Python version
-        run: python -c "import sys; print(sys.version)"
-      - name: Install dev depenencies
-        run: |
-          python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-      - name: Install Dependencies for Linting
-        run: |
-          pip install flake8
-      - name: Lint with Black
-        uses: psf/black@stable
-        with:
-          options: "--exclude=tests/"
-          src: "backend/src/"
-      - name: Lint with Isort
-        run: |
-          isort . --profile black
-      - name: Lint with Flake8
-        run: |
-          # stop the build if there are Python syntax errors or undefined names
-          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-          # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-          flake8 . --count --exit-zero --max-complexity=15 --max-line-length=80 --statistics
-      - name: Lint with MyPy
-        run: |
-          mypy . --pretty --config-file=pyproject.toml --ignore-missing-imports --scripts-are-modules
+#     steps:
+#       - name: Check repository
+#         uses: actions/checkout@v3
+#       - name: Set up Python ${{ matrix.python-version }}
+#         uses: actions/setup-python@v4
+#         with:
+#           python-version: ${{ matrix.python-version }}
+#           cache: "pip"
+#       - name: Display Python version
+#         run: python -c "import sys; print(sys.version)"
+#       - name: Install dev depenencies
+#         run: |
+#           python -m pip install --upgrade pip
+#           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+#       - name: Install Dependencies for Linting
+#         run: |
+#           pip install flake8
+#       - name: Lint with Black
+#         uses: psf/black@stable
+#         with:
+#           options: "--exclude=tests/"
+#           src: "backend/src/"
+#       - name: Lint with Isort
+#         run: |
+#           isort . --profile black
+#       - name: Lint with Flake8
+#         run: |
+#           # stop the build if there are Python syntax errors or undefined names
+#           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+#           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+#           flake8 . --count --exit-zero --max-complexity=15 --max-line-length=80 --statistics
+#       - name: Lint with MyPy
+#         run: |
+#           mypy . --pretty --config-file=pyproject.toml --ignore-missing-imports --scripts-are-modules
 
-  test:
-    name: "Test 🔬"
-    needs: build
-    strategy:
-      matrix:
-        os:
-          - ubuntu-latest
-        python-version:
-          - "3.10"
-    defaults:
-      run:
-        working-directory: backend/
-    env:
-      ENVIRONMENT: ${{ vars.ENVIRONMENT }}
-      DEBUG: ${{ vars.DEBUG }}
-      POSTGRES_DB: ${{ vars.POSTGRES_DB }}
-      POSTGRES_HOST: ${{ vars.POSTGRES_HOST }}
-      POSTGRES_PASSWORD: ${{ vars.POSTGRES_PASSWORD }}
-      POSTGRES_PORT: ${{ vars.POSTGRES_PORT }}
-      POSTGRES_SCHEMA: ${{ vars.POSTGRES_SCHEMA }}
-      POSTGRES_USERNAME: ${{ vars.POSTGRES_USERNAME }}
-      POSTGRES_URI: ${{ vars.POSTGRES_SCHEMA }}://${{ vars.POSTGRES_USERNAME }}:${{ vars.POSTGRES_PASSWORD }}@${{ vars.POSTGRES_HOST }}:${{ vars.POSTGRES_PORT }}/${{ vars.POSTGRES_DB }}
-      BACKEND_SERVER_HOST: ${{ vars.BACKEND_SERVER_HOST }}
-      BACKEND_SERVER_PORT: ${{ vars.BACKEND_SERVER_PORT }}
-      BACKEND_SERVER_WORKERS: ${{ vars.BACKEND_SERVER_WORKERS }}
-      DB_TIMEOUT: ${{ vars.DB_TIMEOUT }}
-      DB_POOL_SIZE: ${{ vars.DB_POOL_SIZE }}
-      DB_MAX_POOL_CON: ${{ vars.DB_MAX_POOL_CON }}
-      DB_POOL_OVERFLOW: ${{ vars.DB_POOL_OVERFLOW }}
-      IS_DB_ECHO_LOG: ${{ vars.IS_DB_ECHO_LOG }}
-      IS_DB_EXPIRE_ON_COMMIT: ${{ vars.IS_DB_EXPIRE_ON_COMMIT }}
-      IS_DB_FORCE_ROLLBACK: ${{ vars.IS_DB_FORCE_ROLLBACK }}
-      IS_ALLOWED_CREDENTIALS: ${{ vars.IS_ALLOWED_CREDENTIALS }}
-      API_TOKEN: ${{ vars.API_TOKEN }}
-      AUTH_TOKEN: ${{ vars.AUTH_TOKEN }}
-      JWT_SECRET_KEY: ${{ vars.JWT_SECRET_KEY }}
-      JWT_SUBJECT: ${{ vars.JWT_SUBJECT }}
-      JWT_TOKEN_PREFIX: ${{ vars.JWT_TOKEN_PREFIX }}
-      JWT_ALGORITHM: ${{ vars.JWT_ALGORITHM }}
-      JWT_MIN: ${{ vars.JWT_MIN }}
-      JWT_HOUR: ${{ vars.JWT_HOUR }}
-      JWT_DAY: ${{ vars.JWT_DAY }}
-      HASHING_ALGORITHM_LAYER_1: ${{ vars.HASHING_ALGORITHM_LAYER_1 }}
-      HASHING_ALGORITHM_LAYER_2: ${{ vars.HASHING_ALGORITHM_LAYER_2 }}
-      HASHING_SALT: ${{ vars.HASHING_SALT }}
+#   test:
+#     name: "Test 🔬"
+#     needs: build
+#     strategy:
+#       matrix:
+#         os:
+#           - ubuntu-latest
+#         python-version:
+#           - "3.10"
+#     defaults:
+#       run:
+#         working-directory: backend/
+#     env:
+#       ENVIRONMENT: ${{ vars.ENVIRONMENT }}
+#       DEBUG: ${{ vars.DEBUG }}
+#       POSTGRES_DB: ${{ vars.POSTGRES_DB }}
+#       POSTGRES_HOST: ${{ vars.POSTGRES_HOST }}
+#       POSTGRES_PASSWORD: ${{ vars.POSTGRES_PASSWORD }}
+#       POSTGRES_PORT: ${{ vars.POSTGRES_PORT }}
+#       POSTGRES_SCHEMA: ${{ vars.POSTGRES_SCHEMA }}
+#       POSTGRES_USERNAME: ${{ vars.POSTGRES_USERNAME }}
+#       BACKEND_SERVER_HOST: ${{ vars.BACKEND_SERVER_HOST }}
+#       BACKEND_SERVER_PORT: ${{ vars.BACKEND_SERVER_PORT }}
+#       BACKEND_SERVER_WORKERS: ${{ vars.BACKEND_SERVER_WORKERS }}
+#       DB_TIMEOUT: ${{ vars.DB_TIMEOUT }}
+#       DB_POOL_SIZE: ${{ vars.DB_POOL_SIZE }}
+#       DB_MAX_POOL_CON: ${{ vars.DB_MAX_POOL_CON }}
+#       DB_POOL_OVERFLOW: ${{ vars.DB_POOL_OVERFLOW }}
+#       IS_DB_ECHO_LOG: ${{ vars.IS_DB_ECHO_LOG }}
+#       IS_DB_EXPIRE_ON_COMMIT: ${{ vars.IS_DB_EXPIRE_ON_COMMIT }}
+#       IS_DB_FORCE_ROLLBACK: ${{ vars.IS_DB_FORCE_ROLLBACK }}
+#       IS_ALLOWED_CREDENTIALS: ${{ vars.IS_ALLOWED_CREDENTIALS }}
+#       API_TOKEN: ${{ vars.API_TOKEN }}
+#       AUTH_TOKEN: ${{ vars.AUTH_TOKEN }}
+#       JWT_SECRET_KEY: ${{ vars.JWT_SECRET_KEY }}
+#       JWT_ALGORITHM: ${{ vars.JWT_ALGORITHM }}
+#       JWT_MIN: ${{ vars.JWT_MIN }}
+#       JWT_HOUR: ${{ vars.JWT_HOUR }}
+#       JWT_DAY: ${{ vars.JWT_DAY }}
+#       HASHING_ALGORITHM_LAYER_1: ${{ vars.HASHING_ALGORITHM_LAYER_1 }}
+#       HASHING_ALGORITHM_LAYER_2: ${{ vars.HASHING_ALGORITHM_LAYER_2 }}
+#       HASHING_SALT: ${{ vars.HASHING_SALT }}
 
-    runs-on: ${{ matrix.os }}
-    steps:
-      - name: Check repository
-        uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-          cache: "pip"
-      - name: Display Python version
-        run: python -c "import sys; print(sys.version)"
-      - name: Install depenencies
-        run: |
-          python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-      - name: Install Dependencies for Testing
-        run: |
-          pip install pytest pytest-asyncio pytest-cov pytest-xdist
-      - name: Test with pytest, no coverage
-        run: |
-          pytest --verbose -p no:warnings --strict-markers --tb=short --asyncio-mode=auto
-      # - name: Test with Pytest-Cov
-      #   run: |
-      #     pytest --cov --cov-report xml .
+#     runs-on: ${{ matrix.os }}
+#     steps:
+#       - name: Check repository
+#         uses: actions/checkout@v3
+#       - name: Set up Python ${{ matrix.python-version }}
+#         uses: actions/setup-python@v4
+#         with:
+#           python-version: ${{ matrix.python-version }}
+#           cache: "pip"
+#       - name: Display Python version
+#         run: python -c "import sys; print(sys.version)"
+#       - name: Install depenencies
+#         run: |
+#           python -m pip install --upgrade pip
+#           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+#       - name: Install Dependencies for Testing
+#         run: |
+#           pip install pytest pytest-asyncio pytest-cov pytest-xdist
+#       - name: Test with pytest, no coverage
+#         run: |
+#           pytest --verbose -p no:warnings --strict-markers --tb=short --asyncio-mode=auto
+#       # - name: Test with Pytest-Cov
+#       #   run: |
+#       #     pytest --cov --cov-report xml .

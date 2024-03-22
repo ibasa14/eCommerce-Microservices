@@ -1,41 +1,47 @@
 version: '3.3'
 
 services:
-  db:
+  product_db:
     image: postgres:latest
-    container_name: db
+    container_name: product_db
     restart: always
     environment:
       - POSTGRES_USER=${POSTGRES_USERNAME}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_DB=${POSTGRES_DB_PRODUCT}
       - PGDATA=/var/lib/postgresql/data/
     volumes:
-      - postgresql_db_data:/var/lib/postgresql/data/
+      - ./dev/postgresql_product_db_data/:/var/lib/postgresql/data/
+      - ./dev/sql/:/var/lib/postgresql/sql
     expose:
-      - 5432
+      - ${POSTGRES_PORT_PRODUCT}
     ports:
-      - 5433:5432
+      - ${POSTGRES_PORT_PRODUCT_EXT}:${POSTGRES_PORT_PRODUCT}
 
-  app:
-    container_name: app
+  product:
+    container_name: product
     restart: always
     build:
       dockerfile: Dockerfile
-      context: ./backend/
+      context: ./product/
     command: tail -F anything
     environment:
       - ENVIRONMENT=${ENVIRONMENT}
       - DEBUG=${DEBUG}
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_DB=${POSTGRES_DB_PRODUCT}
+      - POSTGRES_HOST=${POSTGRES_HOST_PRODUCT}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_PORT=${POSTGRES_PORT_PRODUCT}
       - POSTGRES_SCHEMA=${POSTGRES_SCHEMA}
       - POSTGRES_USERNAME=${POSTGRES_USERNAME}
-      - BACKEND_SERVER_HOST=${BACKEND_SERVER_HOST}
-      - BACKEND_SERVER_PORT=${BACKEND_SERVER_PORT}
-      - BACKEND_SERVER_WORKERS=${BACKEND_SERVER_WORKERS}
+      - SERVER_HOST=${PRODUCT_HOST}
+      - SERVER_PORT=${PRODUCT_PORT}
+      - SERVER_WORKERS=${PRODUCT_WORKERS}
+      - AUTHENTICATION_HOST=${AUTHENTICATION_HOST}
+      - AUTHENTICATION_PORT=${AUTHENTICATION_PORT}
+      - AUTHENTICATION_PORT_EXT=${AUTHENTICATION_PORT_EXT}
+      - AUTHENTICATION_ENDPOINT=${AUTHENTICATION_ENDPOINT}
+      - AUTHENTICATION_ROUTER=${AUTHENTICATION_ROUTER}
       - DB_TIMEOUT=${DB_TIMEOUT}
       - DB_POOL_SIZE=${DB_POOL_SIZE}
       - DB_MAX_POOL_CON=${DB_MAX_POOL_CON}
@@ -47,23 +53,81 @@ services:
       - API_TOKEN=${API_TOKEN}
       - AUTH_TOKEN=${AUTH_TOKEN}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
-      - JWT_SUBJECT=${JWT_SUBJECT}
-      - JWT_TOKEN_PREFIX=${JWT_TOKEN_PREFIX}
       - JWT_ALGORITHM=${JWT_ALGORITHM}
       - JWT_MIN=${JWT_MIN}
       - JWT_HOUR=${JWT_HOUR}
       - JWT_DAY=${JWT_DAY}
-      - HASHING_ALGORITHM_LAYER_1=${HASHING_ALGORITHM_LAYER_1}
-      - HASHING_ALGORITHM_LAYER_2=${HASHING_ALGORITHM_LAYER_2}
-      - HASHING_SALT=${HASHING_SALT}
     volumes:
-      - ./backend/:/usr/backend/
+      - ./product/:/usr/product/
     expose:
-      - 8000
+      - ${PRODUCT_PORT}
     ports:
-      - 8001:8000
+      - ${PRODUCT_PORT_EXT}:${PRODUCT_PORT}
     depends_on:
-      - db
+      - product_db
+
+  account_db:
+    image: postgres:latest
+    container_name: account_db
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB_ACCOUNT}
+      - PGDATA=/var/lib/postgresql/data/
+    volumes:
+      - ./dev/postgresql_account_db_data/:/var/lib/postgresql/data/
+      - ./dev/sql/:/var/lib/postgresql/sql
+    expose:
+      - ${POSTGRES_PORT_ACCOUNT}
+    ports:
+      - ${POSTGRES_PORT_ACCOUNT_EXT}:${POSTGRES_PORT_ACCOUNT}
+    command: -p ${POSTGRES_PORT_ACCOUNT}
+
+  account:
+    container_name: account
+    restart: always
+    build:
+      dockerfile: Dockerfile
+      context: ./account/
+    command: tail -F anything
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT}
+      - DEBUG=${DEBUG}
+      - POSTGRES_DB=${POSTGRES_DB_ACCOUNT}
+      - POSTGRES_HOST=${POSTGRES_HOST_ACCOUNT}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_PORT=${POSTGRES_PORT_ACCOUNT}
+      - POSTGRES_SCHEMA=${POSTGRES_SCHEMA}
+      - POSTGRES_USERNAME=${POSTGRES_USERNAME}
+      - SERVER_HOST=${AUTHENTICATION_HOST}
+      - SERVER_PORT=${AUTHENTICATION_PORT}
+      - SERVER_WORKERS=${AUTHENTICATION_WORKERS}
+      - DB_TIMEOUT=${DB_TIMEOUT}
+      - DB_POOL_SIZE=${DB_POOL_SIZE}
+      - DB_MAX_POOL_CON=${DB_MAX_POOL_CON}
+      - DB_POOL_OVERFLOW=${DB_POOL_OVERFLOW}
+      - IS_DB_ECHO_LOG=${IS_DB_ECHO_LOG}
+      - IS_DB_EXPIRE_ON_COMMIT=${IS_DB_EXPIRE_ON_COMMIT}
+      - IS_DB_FORCE_ROLLBACK=${IS_DB_FORCE_ROLLBACK}
+      - IS_ALLOWED_CREDENTIALS=${IS_ALLOWED_CREDENTIALS}
+      - API_TOKEN=${API_TOKEN}
+      - AUTH_TOKEN=${AUTH_TOKEN}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - JWT_ALGORITHM=${JWT_ALGORITHM}
+      - JWT_MIN=${JWT_MIN}
+      - JWT_HOUR=${JWT_HOUR}
+      - JWT_DAY=${JWT_DAY}
+      - HASHING_ALGORITHM=${HASHING_ALGORITHM}
+    volumes:
+      - ./account/:/usr/account/
+    expose:
+      - ${AUTHENTICATION_PORT}
+    ports:
+      - ${AUTHENTICATION_PORT_EXT}:${AUTHENTICATION_PORT}
+    depends_on:
+      - account_db
 
 volumes:
-  postgresql_db_data:
+  postgresql_product_db_data:
+  postgresql_account_db_data:

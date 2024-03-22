@@ -25,14 +25,14 @@ repos:
       - id: black
         language_version: python3.10.12
         args:
-          - --config=backend/pyproject.toml
+          - --config=pyproject.toml
   - repo: https://github.com/pycqa/isort
     rev: 5.11.5
     hooks:
       - id: isort
         name: isort (python)
         args:
-          - --settings-path=backend/pyproject.toml
+          - --settings-path=pyproject.toml
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: "v1.5.1"
     hooks:
@@ -40,7 +40,7 @@ repos:
         additional_dependencies: [alembic]
         args:
           [
-            "--config-file=backend/pyproject.toml",
+            "--config-file=pyproject.toml",
             "--pretty",
             "--ignore-missing-imports",
           ]
