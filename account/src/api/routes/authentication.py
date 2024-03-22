@@ -2,19 +2,19 @@ import fastapi
 from typing import Annotated
 from src.api.dependencies.repository import get_repository
 import src.data.schemas.user as UserSchema
-from src.constants import AUTHENTICATION_ROUTER_URL
 from src.data.models import User
 from src.crud.user import UserCRUD
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
+from fastapi import Depends
 from src.utilities.exceptions.http.exc_400 import (
     http_exc_400_credentials_bad_signin_request,
     http_exc_400_credentials_bad_signup_request,
 )
 from src.securities.authentication.jwt import jwt_generator
+from src.config.manager import settings
 
 router = fastapi.APIRouter(
-    prefix=AUTHENTICATION_ROUTER_URL, tags=["authorization"]
+    prefix=settings.AUTHENTICATION_ROUTER, tags=["authentication"]
 )
 
 
@@ -33,7 +33,9 @@ async def login(
     except Exception:
         raise await http_exc_400_credentials_bad_signin_request()
 
-    access_token = jwt_generator.generate_access_token(user=UserSchema.User(**db_user.to_dict()))
+    access_token = jwt_generator.generate_access_token(
+        user=UserSchema.User(**db_user.to_dict())
+    )
 
     return UserSchema.UserInResponse(
         id=db_user.id,
