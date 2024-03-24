@@ -14,5 +14,10 @@ class OrderDB(Order):
     user_id: int
 
 
+class OrderInCreate(BaseSchemaModel):
+    user_id: int
+    total_price: float
+
+
 class OrderWithDetails(Order):
     details: list[OrderDetail]

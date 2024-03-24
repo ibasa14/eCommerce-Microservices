@@ -18,7 +18,7 @@ router = fastapi.APIRouter(prefix=ORDER_ROUTER_URL, tags=["order"])
 
 
 class OrderingEnum(str, Enum):
-    name = "name"
+    date = "date"
     price = "price"
 
 
@@ -29,11 +29,11 @@ class OrderingType(str, Enum):
 
 @router.get(
     path="",
-    name="orders:get-multiple-order",
-    response_model=List[OrderSchema.OrderInResponse],
+    name="orders:get-multiple-order-for-user",
+    response_model=List[OrderSchema.Order],
     status_code=fastapi.status.HTTP_200_OK,
 )
-async def get_multiple_order(
+async def get_multiple_order_for_user(
     current_user: Annotated[
         UserSchema.User,
         fastapi.Security(get_current_active_user, scopes=["order:read"]),
@@ -41,12 +41,67 @@ async def get_multiple_order(
     order_crud: OrderCRUD = fastapi.Depends(
         get_repository(repo_type=OrderCRUD, model=Order)
     ),
-    categories: Annotated[
+    order_by: Annotated[
+        OrderingEnum,
+        fastapi.Query(
+            title="Order ordering",
+            description="Set the parameter use to order",
+        ),
+    ] = None,
+    order_type: Annotated[
+        OrderingType,
+        fastapi.Query(
+            title="Order ordering type",
+            description="Set the ordering approach",
+        ),
+    ] = OrderingType.asc,
+    min_cost: Annotated[
+        float,
+        fastapi.Query(
+            title="Min Cost", description="Set the minimum cost", ge=0
+        ),
+    ] = None,
+    max_cost: Annotated[
+        float,
+        fastapi.Query(
+            title="Max Cost", description="Set the maximum cost", ge=0
+        ),
+    ] = None,
+) -> List[OrderSchema.Order]:
+    db_orders = await order_crud.get_multiple(
+        user_id=current_user.id,
+        order_by=order_by,
+        order_type=order_type,
+        min_cost=min_cost,
+        max_cost=max_cost,
+    )
+    db_orders_list: list = list()
+    for db_order in db_orders:
+        order = OrderSchema.Order(**db_order.to_dict())
+        db_orders_list.append(order)
+    return db_orders_list
+
+
+@router.get(
+    path="all",
+    name="orders:get-multiple-order",
+    response_model=List[OrderSchema.Order],
+    status_code=fastapi.status.HTTP_200_OK,
+)
+async def get_multiple_order(
+    current_user: Annotated[
+        UserSchema.User,
+        fastapi.Security(get_current_active_user, scopes=["order:read-all"]),
+    ],
+    order_crud: OrderCRUD = fastapi.Depends(
+        get_repository(repo_type=OrderCRUD, model=Order)
+    ),
+    users_id: Annotated[
         str,
         fastapi.Query(
-            title="Order Category",
-            description="Identifier for the specific category",
-            examples="1,2,3",
+            title="Order ordering",
+            description="Set the users from which to extract orders",
+            example="1,2,3,4,5,6,7,8,9,10",
         ),
     ] = None,
     order_by: Annotated[
@@ -75,27 +130,25 @@ async def get_multiple_order(
             title="Max Cost", description="Set the maximum cost", ge=0
         ),
     ] = None,
-) -> List[OrderSchema.OrderInResponse]:
+) -> List[OrderSchema.Order]:
     db_orders = await order_crud.get_multiple(
-        categories=categories,
+        user_id=[uid.strip() for uid in ",".split(users_id)],
         order_by=order_by,
         order_type=order_type,
         min_cost=min_cost,
         max_cost=max_cost,
     )
     db_orders_list: list = list()
-
     for db_order in db_orders:
-        order = OrderSchema.OrderInResponse(**db_order.to_dict())
+        order = OrderSchema.Order(**db_order.to_dict())
         db_orders_list.append(order)
-
     return db_orders_list
 
 
 @router.get(
     path="/{id}",
     name="orders:get-order",
-    response_model=OrderSchema.OrderInResponse,
+    response_model=OrderSchema.Order,
     status_code=fastapi.status.HTTP_200_OK,
 )
 async def get_order(
@@ -107,20 +160,20 @@ async def get_order(
     order_crud: OrderCRUD = fastapi.Depends(
         get_repository(repo_type=OrderCRUD, model=Order)
     ),
-) -> OrderSchema.OrderInResponse:
+) -> OrderSchema.Order:
     try:
         db_order = await order_crud.get(id=id)
 
     except EntityDoesNotExist:
         raise await http_404_exc_id_not_found_request(id=id)
 
-    return OrderSchema.OrderInResponse(**db_order.to_dict())
+    return OrderSchema.Order(**db_order.to_dict())
 
 
 @router.post(
     path="",
     name="orders:post-order",
-    response_model=OrderSchema.OrderInResponse,
+    response_model=OrderSchema.OrderDB,
     status_code=fastapi.status.HTTP_201_CREATED,
 )
 async def create_order(
@@ -132,38 +185,10 @@ async def create_order(
     order_crud: OrderCRUD = fastapi.Depends(
         get_repository(repo_type=OrderCRUD, model=Order)
     ),
-) -> OrderSchema.OrderInResponse:
+) -> OrderSchema.Order:
     created_order = await order_crud.create_order(order_create=order_create)
 
-    return OrderSchema.OrderInResponse(**created_order.to_dict())
-
-
-@router.put(
-    path="/{id}",
-    name="orders:update-order",
-    response_model=OrderSchema.OrderInResponse,
-    status_code=fastapi.status.HTTP_200_OK,
-)
-async def update_order(
-    id: int,
-    order_in_update: OrderSchema.OrderInUpdate,
-    current_user: Annotated[
-        UserSchema.User,
-        fastapi.Security(get_current_active_user, scopes=["order:update"]),
-    ],
-    order_crud: OrderCRUD = fastapi.Depends(
-        get_repository(repo_type=OrderCRUD, model=Order)
-    ),
-) -> OrderSchema.OrderInResponse:
-    try:
-        updated_db_order = await order_crud.update_order(
-            id=id, order_update=order_in_update
-        )
-
-    except EntityDoesNotExist:
-        raise await http_404_exc_id_not_found_request(id=id)
-
-    return OrderSchema.OrderInResponse(**updated_db_order.to_dict())
+    return OrderSchema.Order(**created_order.to_dict())
 
 
 @router.delete(
