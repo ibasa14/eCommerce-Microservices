@@ -25,7 +25,9 @@ config.set_section_option(
 )
 config.set_section_option(section, "POSTGRES_HOST", settings.DB_POSTGRES_HOST)
 config.set_section_option(section, "POSTGRES_DB", settings.DB_POSTGRES_NAME)
-config.set_section_option(section, "POSTGRES_PORT", str(settings.DB_POSTGRES_PORT))
+config.set_section_option(
+    section, "POSTGRES_PORT", str(settings.DB_POSTGRES_PORT)
+)
 
 
 from src.data.database import SqlAlchemyBase

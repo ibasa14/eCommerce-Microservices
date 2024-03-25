@@ -58,9 +58,7 @@ class OrderBaseSettings(pydantic_settings.BaseSettings):
     AUTHENTICATION_HOST: str = config("AUTHENTICATION_HOST", cast=str)  # type: ignore
     AUTHENTICATION_ROUTER: str = config("AUTHENTICATION_ROUTER", cast=str)  # type: ignore
     AUTHENTICATION_ENDPOINT: str = config("AUTHENTICATION_ENDPOINT", cast=str)  # type: ignore
-    AUTHENTICATION_URL: str = (
-        f"http://{AUTHENTICATION_HOST}:{AUTHENTICATION_PORT_EXT}/api{AUTHENTICATION_ROUTER}{AUTHENTICATION_ENDPOINT}"
-    )
+    AUTHENTICATION_URL: str = f"http://{AUTHENTICATION_HOST}:{AUTHENTICATION_PORT_EXT}/api{AUTHENTICATION_ROUTER}{AUTHENTICATION_ENDPOINT}"
 
     @property
     def set_order_app_attributes(self) -> dict[str, str | bool | None]:

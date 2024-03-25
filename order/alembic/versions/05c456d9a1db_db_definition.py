@@ -7,7 +7,7 @@ Create Date: 2023-09-27 14:25:02.937311
 """
 
 from typing import Sequence, Union
-
+from sqlalchemy.sql import func
 from alembic import op
 import sqlalchemy as sa
 
@@ -25,7 +25,9 @@ def upgrade() -> None:
         "orders",
         sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
         sa.Column("user_id", sa.Integer(), nullable=False),
-        sa.Column("date", sa.DateTime(), nullable=True),
+        sa.Column(
+            "date", sa.DateTime, server_default=func.now(), nullable=True
+        ),
         sa.Column("total_price", sa.Float(), nullable=False),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -35,8 +37,8 @@ def upgrade() -> None:
         sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
         sa.Column("quantity", sa.Integer(), nullable=False),
         sa.Column("total", sa.Float(), nullable=False),
-        sa.Column("order_id", sa.Integer(), nullable=True),
-        sa.Column("product_id", sa.Integer(), nullable=True),
+        sa.Column("order_id", sa.Integer(), nullable=False),
+        sa.Column("product_id", sa.Integer(), nullable=False),
         sa.ForeignKeyConstraint(["order_id"], ["orders.id"]),
         sa.PrimaryKeyConstraint("id"),
     )

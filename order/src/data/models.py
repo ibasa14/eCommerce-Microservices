@@ -12,9 +12,10 @@ class Order(SqlAlchemyBase):  # type: ignore
     id: Column[Integer] = Column(
         Integer, primary_key=True, autoincrement=True
     )  # type: ignore
-    user_id: Column[String] = Column(String, nullable=False)  # type: ignore
-    date: Column[DateTime] = Column(DateTime, server_default=func.now())  # type: ignore
+    user_id: Column[Integer] = Column(Integer, nullable=False)  # type: ignore
+    date: Column[DateTime] = Column(DateTime, server_default=func.now(), nullable=False)  # type: ignore
     total_price: Column[Float] = Column(Float, nullable=False)  # type: ignore
+    order_details = relationship("OrderDetail", back_populates="order", uselist=True, cascade="all, delete")  # type: ignore
 
     def to_dict(self) -> dict:
         return {
@@ -35,7 +36,7 @@ class OrderDetail(SqlAlchemyBase):  # type: ignore
     total: Column[Float] = Column(Float, nullable=False)  # type: ignore
     order_id: Column[Integer] = Column(Integer, ForeignKey("orders.id"))  # type: ignore
     product_id: Column[Integer] = Column(Integer, nullable=False)  # type: ignore
-    order = relationship("Order", back_populates="order_details", uselist=True, cascade="all, delete")  # type: ignore
+    order = relationship("Order", back_populates="order_details")  # type: ignore
 
     def to_dict(self) -> dict:
         return {

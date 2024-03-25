@@ -1,7 +1,10 @@
-from typing import Optional
+from typing import List
 import datetime
 from src.data.schemas.base import BaseSchemaModel
-from src.data.schemas.order_detail import OrderDetail
+from src.data.schemas.order_detail import (
+    OrderDetail,
+    OrderDetailForSpecificOrder,
+)
 
 
 class Order(BaseSchemaModel):
@@ -12,11 +15,6 @@ class Order(BaseSchemaModel):
 class OrderDB(Order):
     id: int
     user_id: int
-
-
-class OrderInCreate(BaseSchemaModel):
-    user_id: int
-    total_price: float
 
 
 class OrderWithDetails(Order):

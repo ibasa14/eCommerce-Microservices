@@ -46,7 +46,6 @@ class ProductCRUD(BaseCRUD):
         new_product = Product(**product_create.model_dump(exclude_none=True))
         self.async_session.add(instance=new_product)
         await self.async_session.commit()
-        await self.async_session.refresh(instance=new_product)
         return new_product
 
     async def read_product_by_productname(self, productname: str) -> Product:

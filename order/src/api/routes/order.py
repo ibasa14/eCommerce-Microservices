@@ -3,6 +3,7 @@ from typing import List, Dict
 from src.api.dependencies.repository import get_repository
 from src.api.dependencies.authentication import get_current_active_user
 import src.data.schemas.order as OrderSchema
+import src.data.schemas.order_detail as OrderDetailSchema
 import src.data.schemas.user as UserSchema
 from src.data.models import Order
 from src.crud.order import OrderCRUD
@@ -69,7 +70,7 @@ async def get_multiple_order_for_user(
     ] = None,
 ) -> List[OrderSchema.Order]:
     db_orders = await order_crud.get_multiple(
-        user_id=current_user.id,
+        users_id=[current_user.id],
         order_by=order_by,
         order_type=order_type,
         min_cost=min_cost,
@@ -83,7 +84,7 @@ async def get_multiple_order_for_user(
 
 
 @router.get(
-    path="all",
+    path="/admin/all",
     name="orders:get-multiple-order",
     response_model=List[OrderSchema.Order],
     status_code=fastapi.status.HTTP_200_OK,
@@ -101,9 +102,9 @@ async def get_multiple_order(
         fastapi.Query(
             title="Order ordering",
             description="Set the users from which to extract orders",
-            example="1,2,3,4,5,6,7,8,9,10",
+            examples={"users_id": "1,2,3"},
         ),
-    ] = None,
+    ] = "",
     order_by: Annotated[
         OrderingEnum,
         fastapi.Query(
@@ -132,7 +133,9 @@ async def get_multiple_order(
     ] = None,
 ) -> List[OrderSchema.Order]:
     db_orders = await order_crud.get_multiple(
-        user_id=[uid.strip() for uid in ",".split(users_id)],
+        users_id=[uid.strip() for uid in users_id.split(",")]
+        if users_id
+        else None,
         order_by=order_by,
         order_type=order_type,
         min_cost=min_cost,
@@ -177,7 +180,7 @@ async def get_order(
     status_code=fastapi.status.HTTP_201_CREATED,
 )
 async def create_order(
-    order_create: OrderSchema.OrderInCreate,
+    order_in_create: List[OrderDetailSchema.OrderDetailForSpecificOrder],
     current_user: Annotated[
         UserSchema.User,
         fastapi.Security(get_current_active_user, scopes=["order:create"]),
@@ -185,10 +188,11 @@ async def create_order(
     order_crud: OrderCRUD = fastapi.Depends(
         get_repository(repo_type=OrderCRUD, model=Order)
     ),
-) -> OrderSchema.Order:
-    created_order = await order_crud.create_order(order_create=order_create)
-
-    return OrderSchema.Order(**created_order.to_dict())
+) -> OrderSchema.OrderDB:
+    created_order = await order_crud.create_order(
+        order_create=order_in_create, user_id=current_user.id
+    )
+    return OrderSchema.OrderDB(**created_order.to_dict())
 
 
 @router.delete(

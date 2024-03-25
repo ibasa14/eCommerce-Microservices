@@ -82,6 +82,7 @@ services:
       - ${POSTGRES_PORT_ORDER}
     ports:
       - ${POSTGRES_PORT_ORDER_EXT}:${POSTGRES_PORT_ORDER}
+    command: -p ${POSTGRES_PORT_ORDER}
 
   order:
     container_name: order

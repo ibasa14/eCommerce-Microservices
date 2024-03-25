@@ -1,13 +1,14 @@
-from typing import Optional
-import datetime
 from src.data.schemas.base import BaseSchemaModel
 
 
-class OrderDetail(BaseSchemaModel):
+class OrderDetailForSpecificOrder(BaseSchemaModel):
     quantity: int
     total: float
-    order_id: int
     product_id: int
+
+
+class OrderDetail(OrderDetailForSpecificOrder):
+    order_id: int
 
 
 class OrderDetailDB(OrderDetail):

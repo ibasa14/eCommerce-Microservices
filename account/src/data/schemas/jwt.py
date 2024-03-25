@@ -10,6 +10,7 @@ class JWToken(pydantic.BaseModel):
 
 
 class JWTUser(pydantic.BaseModel):
+    id: int
     name: str
     email: pydantic.EmailStr
     is_active: bool
