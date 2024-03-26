@@ -24,7 +24,6 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./product/
-    command: tail -F anything
     environment:
       - ENVIRONMENT=${ENVIRONMENT}
       - DEBUG=${DEBUG}
@@ -90,7 +89,6 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./order/
-    command: tail -F anything
     environment:
       - ENVIRONMENT=${ENVIRONMENT}
       - DEBUG=${DEBUG}
@@ -157,7 +155,6 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./account/
-    command: tail -F anything
     environment:
       - ENVIRONMENT=${ENVIRONMENT}
       - DEBUG=${DEBUG}

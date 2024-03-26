@@ -5,6 +5,7 @@ from src.data.schemas.product import (
     ProductInCreate,
     ProductInUpdate,
     ProductInResponse,
+    ProductToSubstract,
 )
 from src.crud.base import BaseCRUD
 
@@ -46,6 +47,7 @@ class ProductCRUD(BaseCRUD):
         new_product = Product(**product_create.model_dump(exclude_none=True))
         self.async_session.add(instance=new_product)
         await self.async_session.commit()
+        await self.async_session.refresh(instance=new_product)
         return new_product
 
     async def read_product_by_productname(self, productname: str) -> Product:
@@ -81,3 +83,27 @@ class ProductCRUD(BaseCRUD):
         await self.async_session.refresh(instance=update_product)
 
         return update_product  # type: ignore
+
+    async def subtract_from_inventory(
+        self, products_substract: Sequence[ProductToSubstract]
+    ) -> Sequence[Product]:
+        product_response = []
+        for product in products_substract:
+            select_stmt = sqlalchemy.select(Product).where(
+                Product.id == product.id
+            )
+            query = await self.async_session.execute(statement=select_stmt)
+            update_product = query.scalar()
+
+            if not update_product:
+                raise EntityDoesNotExist(f"Product with id `{id}` does not exist!")  # type: ignore
+
+            try:
+                update_product.stock -= product.quantity
+                self.async_session.add(instance=update_product)
+                await self.async_session.flush()
+                product_response.append(update_product)
+            except ValueError:
+                raise ValueError("Cannot subtract more than available stock!")
+        await self.async_session.commit()
+        return product_response  # type: ignore

@@ -5,6 +5,7 @@ Revises:
 Create Date: 2023-09-27 14:25:02.937311
 
 """
+
 from typing import Sequence, Union
 
 from alembic import op
@@ -38,7 +39,14 @@ POPULATE_USER_TABLE: str = """
             '$2b$12$zX6L9xYc82wiy5VxE8igT.isAdFbYs7zwXddSfk/uaxmk/ot.CWae',
             true,
             false,
-            1);
+            1),
+            (6,
+            'user',
+            'user@ibc.com',
+            '$2b$12$IJmtQ9Upo5c.EGE8t70wV.Bty4jpNoKjzRyIU81pgt23sQIm4KYT2',
+            true,
+            false,
+            2);
 """
 
 

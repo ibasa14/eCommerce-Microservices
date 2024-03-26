@@ -28,3 +28,8 @@ class ProductInResponse(BaseSchemaModel):
     price: float
     stock: int
     category_id: int
+
+
+class ProductToSubstract(BaseSchemaModel):
+    id: int
+    quantity: int

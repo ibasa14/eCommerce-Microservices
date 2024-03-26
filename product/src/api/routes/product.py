@@ -168,6 +168,33 @@ async def update_product(
     return ProductSchema.ProductInResponse(**updated_db_product.to_dict())
 
 
+@router.put(
+    path="/inventory/substract",
+    name="products:inventory-substract",
+    status_code=fastapi.status.HTTP_200_OK,
+)
+async def inventory_substract(
+    products_to_substract: List[ProductSchema.ProductToSubstract],
+    current_user: Annotated[
+        UserSchema.User,
+        fastapi.Security(get_current_active_user, scopes=["product:update"]),
+    ],
+    product_crud: ProductCRUD = fastapi.Depends(
+        get_repository(repo_type=ProductCRUD, model=Product)
+    ),
+) -> bool:
+    try:
+        updated_db_product = await product_crud.subtract_from_inventory(
+            products_to_substract
+        )
+        if updated_db_product:
+            return True
+        return False
+    except Exception as e:
+        print(f"Error updating product: {e}")
+        return False
+
+
 @router.delete(
     path="/{id}",
     name="products:delete-product",
