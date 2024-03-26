@@ -1,6 +1,7 @@
 import httpx
 import pytest
 from src.constants import ORDER_ROUTER_URL
+from unittest import mock
 
 
 @pytest.fixture
@@ -38,8 +39,17 @@ async def test_crud_orders_non_authenticated(
     assert response_delete_order.status_code == 401
 
 
+from unittest.mock import AsyncMock
+from unittest import mock
+
+
+@mock.patch(
+    "src.crud.order.OrderCRUD.is_product_updated",
+    return_value=AsyncMock(return_value=True),
+)
 @pytest.mark.asyncio
 async def test_crud_orders(
+    mock_is_product_updated: AsyncMock,
     async_authenticated_client: httpx.AsyncClient,
     api_order_url: str,
 ) -> None:

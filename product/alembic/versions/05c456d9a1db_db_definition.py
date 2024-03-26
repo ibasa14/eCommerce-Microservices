@@ -28,20 +28,12 @@ POPULATE_CATEGORY_TABLE: str = """
             ('bakery');
 """
 
-POPULATE_PRODUCT_TABLE: str = """
-insert into products(name, description, price, stock, category_id)
- values ('producto1', 'nada', 22.3, 5, 1),
-        ('producto2', 'nada', 22.3, 10, 2);
-"""
-
 
 def populate_category() -> None:
     op.execute(POPULATE_CATEGORY_TABLE)
-    op.execute(POPULATE_PRODUCT_TABLE)
 
 
 def clean_category() -> None:
-    op.execute("DELETE FROM products;")
     op.execute("DELETE FROM categories;")
 
 
@@ -58,7 +50,12 @@ def upgrade() -> None:
         sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
         sa.Column("name", sa.String(), nullable=False),
         sa.Column("description", sa.String(), nullable=True),
-        sa.Column("picture", sa.String(), nullable=True),
+        sa.Column(
+            "picture",
+            sa.String(),
+            server_default="not_defined.png",
+            nullable=False,
+        ),
         sa.Column(
             "price", sa.Float(), sa.CheckConstraint("price>=0"), nullable=False
         ),

@@ -17,6 +17,8 @@ echo "DB Connection --- Successfully Established!"
 alembic downgrade base
 alembic upgrade head
 
+python src/data/populate_db.py
+
 # Start up the product server
 uvicorn src.main:app --reload --workers $SERVER_WORKERS --host 0.0.0.0 --port $SERVER_PORT
 # tail -f /dev/null
