@@ -9,7 +9,6 @@ from jose import JWTError
 from src.data.schemas.user import User
 from src.data.schemas.jwt import JWTUser
 from src.securities.authorizations.jwt import jwt_retriever
-import httpx
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=settings.AUTHENTICATION_URL)
 

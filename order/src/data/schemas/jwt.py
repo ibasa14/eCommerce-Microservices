@@ -16,3 +16,4 @@ class JWTUser(pydantic.BaseModel):
     is_logged_in: bool
     role_id: int
     scopes: list[str]
+    token: str

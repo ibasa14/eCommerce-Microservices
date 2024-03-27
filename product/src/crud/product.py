@@ -96,14 +96,15 @@ class ProductCRUD(BaseCRUD):
             update_product = query.scalar()
 
             if not update_product:
-                raise EntityDoesNotExist(f"Product with id `{id}` does not exist!")  # type: ignore
+                raise EntityDoesNotExist(f"Product with id does not exist!")  # type: ignore
 
             try:
-                update_product.stock -= product.quantity
-                self.async_session.add(instance=update_product)
-                await self.async_session.flush()
+                update_stmt = sqlalchemy.update(table=Product).where(Product.id == update_product.id).values(stock=update_product.stock-product.quantity)  # type: ignore
+                await self.async_session.execute(statement=update_stmt)
+                await self.async_session.commit()
+                await self.async_session.refresh(instance=update_product)
                 product_response.append(update_product)
-            except ValueError:
+            except Exception:
                 raise ValueError("Cannot subtract more than available stock!")
-        await self.async_session.commit()
+        
         return product_response  # type: ignore

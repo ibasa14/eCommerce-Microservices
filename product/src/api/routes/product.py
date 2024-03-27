@@ -10,6 +10,9 @@ from src.utilities.exceptions.database import EntityDoesNotExist
 from src.utilities.exceptions.http.exc_404 import (
     http_404_exc_id_not_found_request,
 )
+from src.utilities.exceptions.http.exc_410 import (
+    http_410_product_gone,
+)
 from src.constants import PRODUCT_ROUTER_URL
 from typing import Annotated
 from enum import Enum
@@ -171,6 +174,7 @@ async def update_product(
 @router.put(
     path="/inventory/substract",
     name="products:inventory-substract",
+    response_model=List[ProductSchema.ProductInResponse],
     status_code=fastapi.status.HTTP_200_OK,
 )
 async def inventory_substract(
@@ -184,15 +188,12 @@ async def inventory_substract(
     ),
 ) -> bool:
     try:
-        updated_db_product = await product_crud.subtract_from_inventory(
+        updated_db_products = await product_crud.subtract_from_inventory(
             products_to_substract
         )
-        if updated_db_product:
-            return True
-        return False
-    except Exception as e:
-        print(f"Error updating product: {e}")
-        return False
+        return [ProductSchema.ProductInResponse(**product.to_dict()) for product in updated_db_products]
+    except Exception:
+        raise await http_410_product_gone()
 
 
 @router.delete(

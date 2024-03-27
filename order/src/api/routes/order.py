@@ -4,17 +4,18 @@ from src.api.dependencies.repository import get_repository
 from src.api.dependencies.authentication import get_current_active_user
 import src.data.schemas.order as OrderSchema
 import src.data.schemas.order_detail as OrderDetailSchema
-import src.data.schemas.user as UserSchema
+import src.data.schemas.jwt as JWTSchema
 from src.data.models import Order
 from src.crud.order import OrderCRUD
 from src.utilities.exceptions.database import EntityDoesNotExist
 from src.utilities.exceptions.http.exc_404 import (
     http_404_exc_id_not_found_request,
 )
+from src.utilities.exceptions.http.exc_409 import (http_409_exc_conflict_not_available_product)
 from src.constants import ORDER_ROUTER_URL
 from typing import Annotated
 from enum import Enum
-
+import httpx
 router = fastapi.APIRouter(prefix=ORDER_ROUTER_URL, tags=["order"])
 
 
@@ -36,7 +37,7 @@ class OrderingType(str, Enum):
 )
 async def get_multiple_order_for_user(
     current_user: Annotated[
-        UserSchema.User,
+        JWTSchema.JWTUser,
         fastapi.Security(get_current_active_user, scopes=["order:read"]),
     ],
     order_crud: OrderCRUD = fastapi.Depends(
@@ -91,7 +92,7 @@ async def get_multiple_order_for_user(
 )
 async def get_multiple_order(
     current_user: Annotated[
-        UserSchema.User,
+        JWTSchema.JWTUser,
         fastapi.Security(get_current_active_user, scopes=["order:read-all"]),
     ],
     order_crud: OrderCRUD = fastapi.Depends(
@@ -157,7 +158,7 @@ async def get_multiple_order(
 async def get_order(
     id: int,
     current_user: Annotated[
-        UserSchema.User,
+        JWTSchema.JWTUser,
         fastapi.Security(get_current_active_user, scopes=["order:read"]),
     ],
     order_crud: OrderCRUD = fastapi.Depends(
@@ -169,7 +170,6 @@ async def get_order(
 
     except EntityDoesNotExist:
         raise await http_404_exc_id_not_found_request(id=id)
-
     return OrderSchema.Order(**db_order.to_dict())
 
 
@@ -182,16 +182,19 @@ async def get_order(
 async def create_order(
     order_in_create: List[OrderDetailSchema.OrderDetailForSpecificOrder],
     current_user: Annotated[
-        UserSchema.User,
+        JWTSchema.JWTUser,
         fastapi.Security(get_current_active_user, scopes=["order:create"]),
     ],
     order_crud: OrderCRUD = fastapi.Depends(
         get_repository(repo_type=OrderCRUD, model=Order)
     ),
 ) -> OrderSchema.OrderDB:
-    created_order = await order_crud.create_order(
-        order_create=order_in_create, user_id=current_user.id
-    )
+    try:
+        created_order = await order_crud.create_order(
+            order_create=order_in_create, user_id=current_user.id, token = current_user.token
+        )
+    except httpx.HTTPStatusError:
+        raise await http_409_exc_conflict_not_available_product()
     return OrderSchema.OrderDB(**created_order.to_dict())
 
 
@@ -203,7 +206,7 @@ async def create_order(
 async def delete_order(
     id: int,
     current_user: Annotated[
-        UserSchema.User,
+        JWTSchema.JWTUser,
         fastapi.Security(get_current_active_user, scopes=["order:delete"]),
     ],
     order_crud: OrderCRUD = fastapi.Depends(

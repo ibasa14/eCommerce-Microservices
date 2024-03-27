@@ -53,12 +53,17 @@ class OrderBaseSettings(pydantic_settings.BaseSettings):
     LOGGING_LEVEL: int = logging.INFO
     LOGGERS: tuple[str, str] = ("uvicorn.asgi", "uvicorn.access")
 
+    PRODUCT_PORT: str = config("PRODUCT_PORT", cast=str)  # type: ignore
+    PRODUCT_HOST: str = config("PRODUCT_HOST", cast=str)  # type: ignore
+
     AUTHENTICATION_PORT: str = config("AUTHENTICATION_PORT", cast=str)  # type: ignore
     AUTHENTICATION_PORT_EXT: str = config("AUTHENTICATION_PORT_EXT", cast=str)  # type: ignore
     AUTHENTICATION_HOST: str = config("AUTHENTICATION_HOST", cast=str)  # type: ignore
     AUTHENTICATION_ROUTER: str = config("AUTHENTICATION_ROUTER", cast=str)  # type: ignore
     AUTHENTICATION_ENDPOINT: str = config("AUTHENTICATION_ENDPOINT", cast=str)  # type: ignore
-    AUTHENTICATION_URL: str = f"http://{AUTHENTICATION_HOST}:{AUTHENTICATION_PORT_EXT}/api{AUTHENTICATION_ROUTER}{AUTHENTICATION_ENDPOINT}"
+    AUTHENTICATION_URL: str = (
+        f"http://{AUTHENTICATION_HOST}:{AUTHENTICATION_PORT_EXT}/api{AUTHENTICATION_ROUTER}{AUTHENTICATION_ENDPOINT}"
+    )
 
     @property
     def set_order_app_attributes(self) -> dict[str, str | bool | None]:

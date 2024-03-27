@@ -24,7 +24,8 @@ class JWTRetriever:
             payload = jose_jwt.decode(
                 token=token, key=self.secret_key, algorithms=[self.algorithm]
             )
-            jwt_user = JWTUser(**payload)
+            attrs = payload | {"token":token}
+            jwt_user = JWTUser(**attrs)
 
         except JoseJWTError as token_decode_error:
             raise ValueError(
