@@ -135,6 +135,28 @@ async def test_crud_products(
     )
     assert response_create_product.status_code == 401
 
+    response_create_product = await async_authenticated_client.put(
+        api_product_url+"/inventory/substract",
+        json=[{
+            "id": 2,
+            "quantity": 1,
+        }],
+        headers={"Content-Type": "application/json"},
+    )
+    assert response_create_product.status_code == 200
+    assert response_create_product.json() == True
+
+    response_create_product = await async_authenticated_client.put(
+        api_product_url+"/inventory/substract",
+        json=[{
+            "id": 2,
+            "quantity": 5,
+        }],
+        headers={"Content-Type": "application/json"},
+    )
+    assert response_create_product.status_code == 200
+    assert response_create_product.json() == False
+
 
 @pytest.mark.asyncio
 async def test_crud_products_w_admin_account(

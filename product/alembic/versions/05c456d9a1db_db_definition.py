@@ -5,6 +5,7 @@ Revises:
 Create Date: 2023-09-27 14:25:02.937311
 
 """
+
 from typing import Sequence, Union
 
 from alembic import op
@@ -49,9 +50,18 @@ def upgrade() -> None:
         sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
         sa.Column("name", sa.String(), nullable=False),
         sa.Column("description", sa.String(), nullable=True),
-        sa.Column("picture", sa.String(), nullable=True),
-        sa.Column("price", sa.Float(), nullable=False),
-        sa.Column("stock", sa.Integer(), nullable=True),
+        sa.Column(
+            "picture",
+            sa.String(),
+            server_default="not_defined.png",
+            nullable=False,
+        ),
+        sa.Column(
+            "price", sa.Float(), sa.CheckConstraint("price>=0"), nullable=False
+        ),
+        sa.Column(
+            "stock", sa.Integer(), sa.CheckConstraint("stock>=0"), nullable=True
+        ),
         sa.Column("category_id", sa.Integer(), nullable=True),
         sa.ForeignKeyConstraint(
             ["category_id"],

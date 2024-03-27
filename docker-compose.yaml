@@ -24,7 +24,6 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./product/
-    command: tail -F anything
     environment:
       - ENVIRONMENT=${ENVIRONMENT}
       - DEBUG=${DEBUG}
@@ -66,6 +65,74 @@ services:
     depends_on:
       - product_db
 
+  order_db:
+    image: postgres:latest
+    container_name: order_db
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB_ORDER}
+      - PGDATA=/var/lib/postgresql/data/
+    volumes:
+      - ./dev/postgresql_order_db_data/:/var/lib/postgresql/data/
+      - ./dev/sql/:/var/lib/postgresql/sql
+    expose:
+      - ${POSTGRES_PORT_ORDER}
+    ports:
+      - ${POSTGRES_PORT_ORDER_EXT}:${POSTGRES_PORT_ORDER}
+    command: -p ${POSTGRES_PORT_ORDER}
+
+  order:
+    container_name: order
+    restart: always
+    build:
+      dockerfile: Dockerfile
+      context: ./order/
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT}
+      - DEBUG=${DEBUG}
+      - POSTGRES_DB=${POSTGRES_DB_ORDER}
+      - POSTGRES_HOST=${POSTGRES_HOST_ORDER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_PORT=${POSTGRES_PORT_ORDER}
+      - POSTGRES_SCHEMA=${POSTGRES_SCHEMA}
+      - POSTGRES_USERNAME=${POSTGRES_USERNAME}
+      - SERVER_HOST=${ORDER_HOST}
+      - SERVER_PORT=${ORDER_PORT}
+      - SERVER_WORKERS=${ORDER_WORKERS}
+      - PRODUCT_HOST=${PRODUCT_HOST}
+      - PRODUCT_PORT=${PRODUCT_PORT}
+      - AUTHENTICATION_HOST=${AUTHENTICATION_HOST}
+      - AUTHENTICATION_PORT=${AUTHENTICATION_PORT}
+      - AUTHENTICATION_PORT_EXT=${AUTHENTICATION_PORT_EXT}
+      - AUTHENTICATION_ENDPOINT=${AUTHENTICATION_ENDPOINT}
+      - AUTHENTICATION_ROUTER=${AUTHENTICATION_ROUTER}
+      - DB_TIMEOUT=${DB_TIMEOUT}
+      - DB_POOL_SIZE=${DB_POOL_SIZE}
+      - DB_MAX_POOL_CON=${DB_MAX_POOL_CON}
+      - DB_POOL_OVERFLOW=${DB_POOL_OVERFLOW}
+      - IS_DB_ECHO_LOG=${IS_DB_ECHO_LOG}
+      - IS_DB_EXPIRE_ON_COMMIT=${IS_DB_EXPIRE_ON_COMMIT}
+      - IS_DB_FORCE_ROLLBACK=${IS_DB_FORCE_ROLLBACK}
+      - IS_ALLOWED_CREDENTIALS=${IS_ALLOWED_CREDENTIALS}
+      - API_TOKEN=${API_TOKEN}
+      - AUTH_TOKEN=${AUTH_TOKEN}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - JWT_ALGORITHM=${JWT_ALGORITHM}
+      - JWT_MIN=${JWT_MIN}
+      - JWT_HOUR=${JWT_HOUR}
+      - JWT_DAY=${JWT_DAY}
+    volumes:
+      - ./order/:/usr/order/
+    expose:
+      - ${ORDER_PORT}
+    ports:
+      - ${ORDER_PORT_EXT}:${ORDER_PORT}
+    depends_on:
+      - order_db
+
+
   account_db:
     image: postgres:latest
     container_name: account_db
@@ -90,7 +157,6 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./account/
-    command: tail -F anything
     environment:
       - ENVIRONMENT=${ENVIRONMENT}
       - DEBUG=${DEBUG}
@@ -119,6 +185,7 @@ services:
       - JWT_HOUR=${JWT_HOUR}
       - JWT_DAY=${JWT_DAY}
       - HASHING_ALGORITHM=${HASHING_ALGORITHM}
+      - AUTHENTICATION_ROUTER=${AUTHENTICATION_ROUTER}
     volumes:
       - ./account/:/usr/account/
     expose:
@@ -130,4 +197,5 @@ services:
 
 volumes:
   postgresql_product_db_data:
+  postgresql_order_db_data:
   postgresql_account_db_data:

@@ -9,18 +9,8 @@ from jose import JWTError
 from src.data.schemas.user import User
 from src.data.schemas.jwt import JWTUser
 from src.securities.authorizations.jwt import jwt_retriever
-import httpx
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=settings.AUTHENTICATION_URL)
-
-
-async def fetch_user_from_account_service(jwt_user: JWTUser) -> User:
-    async with httpx.AsyncClient() as client:
-        user: User = await client.get(
-            f"http://localhost:8002/api/account/{jwt_user.email}"
-        )
-
-    return user
 
 
 async def get_current_user(

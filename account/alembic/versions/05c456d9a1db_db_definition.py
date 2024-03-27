@@ -5,6 +5,7 @@ Revises:
 Create Date: 2023-09-27 14:25:02.937311
 
 """
+
 from typing import Sequence, Union
 
 from alembic import op
@@ -24,32 +25,9 @@ POPULATE_ROLE_TABLE: str = """
            ('client');
 """
 
-POPULATE_USER_TABLE: str = """
-    INSERT INTO users(id,
-                     name,
-                     email,
-                     hashed_password,
-                     is_active,
-                     is_logged_in,
-                     role_id)
-    VALUES (1,
-            'admin',
-            'admin@ibc.com',
-            '$2b$12$zX6L9xYc82wiy5VxE8igT.isAdFbYs7zwXddSfk/uaxmk/ot.CWae',
-            true,
-            false,
-            1);
-"""
 
-
-def populate_tables() -> None:
+def populate_table() -> None:
     op.execute(POPULATE_ROLE_TABLE)
-    op.execute(POPULATE_USER_TABLE)
-
-
-def clean_role() -> None:
-    op.execute("DELETE FROM users;")
-    op.execute("DELETE FROM roles;")
 
 
 def upgrade() -> None:
@@ -75,7 +53,7 @@ def upgrade() -> None:
         ),
         sa.PrimaryKeyConstraint("id"),
     )
-    populate_tables()
+    populate_table()
     # ### end Alembic commands ###
 
 

@@ -1,11 +1,11 @@
 import httpx
 import pytest
-from src.constants import AUTHENTICATION_ROUTER_URL
+from src.config.manager import settings
 
 
 @pytest.fixture
 def api_authentication_url(api_url) -> str:
-    return f"{api_url}{AUTHENTICATION_ROUTER_URL}"
+    return f"{api_url}{settings.AUTHENTICATION_ROUTER}"
 
 
 @pytest.mark.asyncio
@@ -55,6 +55,7 @@ async def test_login_admin(
     assert request_json["authorized_account"]["is_active"] == True
     assert request_json["authorized_account"]["is_logged_in"] == False
     assert request_json["authorized_account"]["role_id"] == 1
+
 
 @pytest.mark.asyncio
 async def test_login_fail(

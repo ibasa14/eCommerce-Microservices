@@ -57,6 +57,7 @@ class AuthenticationBaseSettings(pydantic_settings.BaseSettings):
     LOGGERS: tuple[str, str] = ("uvicorn.asgi", "uvicorn.access")
 
     HASHING_ALGORITHM: str = config("HASHING_ALGORITHM", cast=str)  # type: ignore
+    AUTHENTICATION_ROUTER: str = config("AUTHENTICATION_ROUTER", cast=str)  # type: ignore
 
     @property
     def set_account_app_attributes(self) -> dict[str, str | bool | None]:

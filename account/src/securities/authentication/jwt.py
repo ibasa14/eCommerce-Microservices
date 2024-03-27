@@ -41,10 +41,20 @@ class JWTGenerator:
             raise EntityDoesNotExist(
                 "Cannot generate JWT token for without User entity!"
             )
-        scopes = ["product:read", "product:update"]
+        scopes = [
+            "product:read",
+            "product:update",
+            "order:read",
+            "order:create",
+        ]
         if user.role_id == 1:
-            scopes += ["product:create", "product:delete"]
-        
+            scopes += [
+                "product:create",
+                "product:delete",
+                "order:read-all",
+                "order:delete",
+            ]
+
         data = user.model_dump() | dict(scopes=scopes)
         return self._generate_jwt_token(
             jwt_data=JWTUser(**data).model_dump(),  # type: ignore
