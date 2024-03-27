@@ -18,7 +18,13 @@ class OrderCRUD(BaseCRUD):
 
     async def get(self, id: int) -> Optional[OrderWithDetails]:
         # create a select statement to get the order with the given id with all the OrderDetails
-        stmt = sqlalchemy.select(Order).where(Order.id == id)
+        stmt = (
+            sqlalchemy.select(Order)
+            .where(Order.id == id)
+            .options(
+                joinedload(Order.order_details),
+            )
+        )
         query = await self.async_session.execute(statement=stmt)
 
         if not query:

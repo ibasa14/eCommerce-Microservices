@@ -2,7 +2,6 @@ from typing import List
 import datetime
 from src.data.schemas.base import BaseSchemaModel
 from src.data.schemas.order_detail import (
-    OrderDetail,
     OrderDetailForSpecificOrder,
 )
 
@@ -18,4 +17,4 @@ class OrderDB(Order):
 
 
 class OrderWithDetails(Order):
-    details: list[OrderDetail]
+    details: list[OrderDetailForSpecificOrder]

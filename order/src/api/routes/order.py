@@ -11,11 +11,14 @@ from src.utilities.exceptions.database import EntityDoesNotExist
 from src.utilities.exceptions.http.exc_404 import (
     http_404_exc_id_not_found_request,
 )
-from src.utilities.exceptions.http.exc_409 import (http_409_exc_conflict_not_available_product)
+from src.utilities.exceptions.http.exc_409 import (
+    http_409_exc_conflict_not_available_product,
+)
 from src.constants import ORDER_ROUTER_URL
 from typing import Annotated
 from enum import Enum
 import httpx
+
 router = fastapi.APIRouter(prefix=ORDER_ROUTER_URL, tags=["order"])
 
 
@@ -134,9 +137,9 @@ async def get_multiple_order(
     ] = None,
 ) -> List[OrderSchema.Order]:
     db_orders = await order_crud.get_multiple(
-        users_id=[uid.strip() for uid in users_id.split(",")]
-        if users_id
-        else None,
+        users_id=(
+            [uid.strip() for uid in users_id.split(",")] if users_id else None
+        ),
         order_by=order_by,
         order_type=order_type,
         min_cost=min_cost,
@@ -152,7 +155,7 @@ async def get_multiple_order(
 @router.get(
     path="/{id}",
     name="orders:get-order",
-    response_model=OrderSchema.Order,
+    response_model=OrderSchema.OrderWithDetails,
     status_code=fastapi.status.HTTP_200_OK,
 )
 async def get_order(
@@ -164,13 +167,24 @@ async def get_order(
     order_crud: OrderCRUD = fastapi.Depends(
         get_repository(repo_type=OrderCRUD, model=Order)
     ),
-) -> OrderSchema.Order:
+) -> OrderSchema.OrderWithDetails:
     try:
         db_order = await order_crud.get(id=id)
 
     except EntityDoesNotExist:
         raise await http_404_exc_id_not_found_request(id=id)
-    return OrderSchema.Order(**db_order.to_dict())
+
+    details = [
+        OrderDetailSchema.OrderDetailForSpecificOrder(**detail.to_dict())
+        for detail in db_order.order_details
+    ]
+    return OrderSchema.OrderWithDetails(
+        **{
+            "date": db_order.date,
+            "total_price": db_order.total_price,
+            "details": details,
+        }
+    )
 
 
 @router.post(
@@ -191,7 +205,9 @@ async def create_order(
 ) -> OrderSchema.OrderDB:
     try:
         created_order = await order_crud.create_order(
-            order_create=order_in_create, user_id=current_user.id, token = current_user.token
+            order_create=order_in_create,
+            user_id=current_user.id,
+            token=current_user.token,
         )
     except httpx.HTTPStatusError:
         raise await http_409_exc_conflict_not_available_product()
