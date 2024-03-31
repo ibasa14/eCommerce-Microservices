@@ -27,11 +27,12 @@ class OrderCRUD(BaseCRUD):
         )
         query = await self.async_session.execute(statement=stmt)
 
-        if not query:
+        order = query.scalar()
+        if not order:
             raise EntityDoesNotExist(
                 f"{self.__class__.__name__} with id: {id} does not exist"
             )
-        return query.scalar()
+        return order
 
     async def get_multiple(
         self,

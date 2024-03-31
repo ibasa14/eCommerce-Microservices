@@ -123,6 +123,8 @@ services:
       - JWT_MIN=${JWT_MIN}
       - JWT_HOUR=${JWT_HOUR}
       - JWT_DAY=${JWT_DAY}
+      - CELERY_BROKER_URL=amqp://rabbitmq_broker_celery:5672
+      - CELERY_RESULT_BACKEND=redis://redis_backend_celery:6379/0
     volumes:
       - ./order/:/usr/order/
     expose:
@@ -194,6 +196,47 @@ services:
       - ${AUTHENTICATION_PORT_EXT}:${AUTHENTICATION_PORT}
     depends_on:
       - account_db
+
+  redis_backend_celery:
+    container_name: redis_backend_celery
+    hostname: redis_backend_celery
+    image: redis:7
+    ports:
+      - 6379:6379
+
+  rabbitmq_broker_celery:
+    image: "rabbitmq:3-management"
+    container_name: rabbitmq_broker_celery
+    hostname: rabbitmq_broker_celery
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  celery_worker:
+    container_name: celery_worker
+    restart: always
+    build:
+      dockerfile: Dockerfile.Celery
+      context: ./order/
+    command: celery -A src.celery_worker worker --loglevel=info
+    volumes:
+      - ./order/:/usr/order/
+    environment:
+      - CELERY_BROKER_URL=amqp://rabbitmq_broker_celery:5672
+      - CELERY_RESULT_BACKEND=redis://redis_backend_celery:6379/0
+    depends_on:
+      - order
+      - redis_backend_celery
+      - rabbitmq_broker_celery
+
+  flower:
+    container_name: flower
+    image: mher/flower
+    command: celery --broker=amqp://rabbitmq_broker_celery:5672 flower --port=5555
+    ports:
+      - "5555:5555"
+    depends_on:
+      - celery_worker
 
 volumes:
   postgresql_product_db_data:
