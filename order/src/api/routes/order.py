@@ -18,6 +18,7 @@ from src.constants import ORDER_ROUTER_URL
 from typing import Annotated
 from enum import Enum
 import httpx
+from src.celery_worker import send_email
 
 router = fastapi.APIRouter(prefix=ORDER_ROUTER_URL, tags=["order"])
 
@@ -195,6 +196,7 @@ async def get_order(
 )
 async def create_order(
     order_in_create: List[OrderDetailSchema.OrderDetailForSpecificOrder],
+    background_tasks: fastapi.BackgroundTasks,
     current_user: Annotated[
         JWTSchema.JWTUser,
         fastapi.Security(get_current_active_user, scopes=["order:create"]),
@@ -211,6 +213,11 @@ async def create_order(
         )
     except httpx.HTTPStatusError:
         raise await http_409_exc_conflict_not_available_product()
+
+    # Send email to user with the receipt
+    background_tasks.add_task(
+        send_email, current_user.email, "Order created successfully!"
+    )
     return OrderSchema.OrderDB(**created_order.to_dict())
 
 

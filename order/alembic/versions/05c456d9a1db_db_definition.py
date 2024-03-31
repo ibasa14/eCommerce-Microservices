@@ -26,7 +26,7 @@ def upgrade() -> None:
         sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
         sa.Column("user_id", sa.Integer(), nullable=False),
         sa.Column(
-            "date", sa.DateTime, server_default=func.now(), nullable=True
+            "date", sa.DateTime, server_default=func.now(), nullable=False
         ),
         sa.Column("total_price", sa.Float(), nullable=False),
         sa.PrimaryKeyConstraint("id"),
