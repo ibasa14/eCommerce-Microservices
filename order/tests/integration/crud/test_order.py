@@ -42,12 +42,17 @@ async def test_crud_orders_non_authenticated(
 
 
 @mock.patch(
-    "src.crud.order.OrderCRUD.is_product_updated",
+    "src.crud.order.OrderCRUD._is_product_updated",
     return_value=AsyncMock(return_value=True),
+)
+@mock.patch(
+    "src.api.routes.order.fastapi.BackgroundTasks.add_task",
+    return_value=AsyncMock(return_value=None),
 )
 @pytest.mark.asyncio
 async def test_crud_orders(
     mock_is_product_updated: AsyncMock,
+    mock_add_task: AsyncMock,
     async_authenticated_client: httpx.AsyncClient,
     api_order_url: str,
 ) -> None:

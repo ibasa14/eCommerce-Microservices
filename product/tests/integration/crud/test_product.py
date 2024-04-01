@@ -154,8 +154,7 @@ async def test_crud_products(
         ],
         headers={"Content-Type": "application/json"},
     )
-    assert response_create_product.status_code == 200
-    assert not response_create_product.json()
+    assert response_create_product.status_code == 410
 
 
 @pytest.mark.asyncio

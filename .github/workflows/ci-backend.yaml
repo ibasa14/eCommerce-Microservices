@@ -1,178 +1,138 @@
-# name: "CI - Backend"
-# on:
-#   workflow_dispatch:
-#   pull_request:
-#     branches:
-#       - "feature/**"
-#       - "fix/**"
-#       - "main"
+name: "CI eCommerce-Microservices IBC"
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "feature/**"
+      - "fix/**"
+      - "main"
+env:
+  # Setting an environment variable with the value of a configuration variable
+  ENVIRONMENT: ${{ vars.ENVIRONMENT }}
+  DEBUG: ${{ vars.DEBUG }}
 
-# jobs:
-#   db_build:
-#     name: "Build DB"
-#     strategy:
-#       matrix:
-#         os:
-#           - ubuntu-latest
-#     runs-on: ${{ matrix.os }}
-#     services:
-#       db:
-#         image: postgres:latest
-#         env:
-#           POSTGRES_DB: ${{ vars.POSTGRES_DB }}
-#           POSTGRES_USER: ${{ vars.POSTGRES_USERNAME }}
-#           POSTGRES_PASSWORD: ${{ vars.POSTGRES_PASSWORD }}
-#         ports:
-#           - 5432:5432
-#         options: >-
-#           --health-cmd pg_isready
-#           --health-interval 10s
-#           --health-timeout 5s
-#           --health-retries 5
-#     steps:
-#       - name: Check repository
-#         uses: actions/checkout@v3
-#   build:
-#     name: "Build 🏗"
-#     needs: db_build
-#     strategy:
-#       matrix:
-#         os:
-#           - ubuntu-latest
-#         python-version:
-#           - "3.10"
-#     defaults:
-#       run:
-#         working-directory: backend/
-#     runs-on: ${{ matrix.os }}
-#     steps:
-#       - name: Check repository
-#         uses: actions/checkout@v3
-#       - name: Set up Python ${{ matrix.python-version }}
-#         uses: actions/setup-python@v4
-#         with:
-#           python-version: ${{ matrix.python-version }}
-#           cache: "pip"
-#       - name: Display Python version
-#         run: python -c "import sys; print(sys.version)"
-#       - name: Install depenencies
-#         run: |
-#           python -m pip install --upgrade pip
-#           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+  # Common microservice config
+  EXT_HOST: ${{ vars.EXT_HOST }}
 
-#   code-quality:
-#     name: "Code-Quality 💎"
-#     needs: build
-#     strategy:
-#       matrix:
-#         os:
-#           - ubuntu-latest
-#         python-version:
-#           - "3.10"
-#     defaults:
-#       run:
-#         working-directory: backend/
-#     runs-on: ${{ matrix.os }}
+  # Product microservice
+  PRODUCT_HOST: ${{ vars.PRODUCT_HOST }}
+  PRODUCT_PORT: ${{ vars.PRODUCT_PORT }}
+  PRODUCT_PORT_EXT: ${{ vars.PRODUCT_PORT_EXT }}
+  PRODUCT_WORKERS: ${{ vars.PRODUCT_WORKERS }}
 
-#     steps:
-#       - name: Check repository
-#         uses: actions/checkout@v3
-#       - name: Set up Python ${{ matrix.python-version }}
-#         uses: actions/setup-python@v4
-#         with:
-#           python-version: ${{ matrix.python-version }}
-#           cache: "pip"
-#       - name: Display Python version
-#         run: python -c "import sys; print(sys.version)"
-#       - name: Install dev depenencies
-#         run: |
-#           python -m pip install --upgrade pip
-#           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-#       - name: Install Dependencies for Linting
-#         run: |
-#           pip install flake8
-#       - name: Lint with Black
-#         uses: psf/black@stable
-#         with:
-#           options: "--exclude=tests/"
-#           src: "backend/src/"
-#       - name: Lint with Isort
-#         run: |
-#           isort . --profile black
-#       - name: Lint with Flake8
-#         run: |
-#           # stop the build if there are Python syntax errors or undefined names
-#           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-#           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-#           flake8 . --count --exit-zero --max-complexity=15 --max-line-length=80 --statistics
-#       - name: Lint with MyPy
-#         run: |
-#           mypy . --pretty --config-file=pyproject.toml --ignore-missing-imports --scripts-are-modules
+  # Account microservice
+  AUTHENTICATION_HOST: ${{ vars.AUTHENTICATION_HOST }}
+  AUTHENTICATION_PORT: ${{ vars.AUTHENTICATION_PORT }}
+  AUTHENTICATION_PORT_EXT: ${{ vars.AUTHENTICATION_PORT_EXT }}
+  AUTHENTICATION_WORKERS: ${{ vars.AUTHENTICATION_WORKERS }}
 
-#   test:
-#     name: "Test 🔬"
-#     needs: build
-#     strategy:
-#       matrix:
-#         os:
-#           - ubuntu-latest
-#         python-version:
-#           - "3.10"
-#     defaults:
-#       run:
-#         working-directory: backend/
-#     env:
-#       ENVIRONMENT: ${{ vars.ENVIRONMENT }}
-#       DEBUG: ${{ vars.DEBUG }}
-#       POSTGRES_DB: ${{ vars.POSTGRES_DB }}
-#       POSTGRES_HOST: ${{ vars.POSTGRES_HOST }}
-#       POSTGRES_PASSWORD: ${{ vars.POSTGRES_PASSWORD }}
-#       POSTGRES_PORT: ${{ vars.POSTGRES_PORT }}
-#       POSTGRES_SCHEMA: ${{ vars.POSTGRES_SCHEMA }}
-#       POSTGRES_USERNAME: ${{ vars.POSTGRES_USERNAME }}
-#       BACKEND_SERVER_HOST: ${{ vars.BACKEND_SERVER_HOST }}
-#       BACKEND_SERVER_PORT: ${{ vars.BACKEND_SERVER_PORT }}
-#       BACKEND_SERVER_WORKERS: ${{ vars.BACKEND_SERVER_WORKERS }}
-#       DB_TIMEOUT: ${{ vars.DB_TIMEOUT }}
-#       DB_POOL_SIZE: ${{ vars.DB_POOL_SIZE }}
-#       DB_MAX_POOL_CON: ${{ vars.DB_MAX_POOL_CON }}
-#       DB_POOL_OVERFLOW: ${{ vars.DB_POOL_OVERFLOW }}
-#       IS_DB_ECHO_LOG: ${{ vars.IS_DB_ECHO_LOG }}
-#       IS_DB_EXPIRE_ON_COMMIT: ${{ vars.IS_DB_EXPIRE_ON_COMMIT }}
-#       IS_DB_FORCE_ROLLBACK: ${{ vars.IS_DB_FORCE_ROLLBACK }}
-#       IS_ALLOWED_CREDENTIALS: ${{ vars.IS_ALLOWED_CREDENTIALS }}
-#       API_TOKEN: ${{ vars.API_TOKEN }}
-#       AUTH_TOKEN: ${{ vars.AUTH_TOKEN }}
-#       JWT_SECRET_KEY: ${{ vars.JWT_SECRET_KEY }}
-#       JWT_ALGORITHM: ${{ vars.JWT_ALGORITHM }}
-#       JWT_MIN: ${{ vars.JWT_MIN }}
-#       JWT_HOUR: ${{ vars.JWT_HOUR }}
-#       JWT_DAY: ${{ vars.JWT_DAY }}
-#       HASHING_ALGORITHM_LAYER_1: ${{ vars.HASHING_ALGORITHM_LAYER_1 }}
-#       HASHING_ALGORITHM_LAYER_2: ${{ vars.HASHING_ALGORITHM_LAYER_2 }}
-#       HASHING_SALT: ${{ vars.HASHING_SALT }}
+  # Order microservice
+  ORDER_HOST: ${{ vars.ORDER_HOST }}
+  ORDER_PORT: ${{ vars.ORDER_PORT }}
+  ORDER_PORT_EXT: ${{ vars.ORDER_PORT_EXT }}
+  ORDER_WORKERS: ${{ vars.ORDER_WORKERS }}
 
-#     runs-on: ${{ matrix.os }}
-#     steps:
-#       - name: Check repository
-#         uses: actions/checkout@v3
-#       - name: Set up Python ${{ matrix.python-version }}
-#         uses: actions/setup-python@v4
-#         with:
-#           python-version: ${{ matrix.python-version }}
-#           cache: "pip"
-#       - name: Display Python version
-#         run: python -c "import sys; print(sys.version)"
-#       - name: Install depenencies
-#         run: |
-#           python -m pip install --upgrade pip
-#           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-#       - name: Install Dependencies for Testing
-#         run: |
-#           pip install pytest pytest-asyncio pytest-cov pytest-xdist
-#       - name: Test with pytest, no coverage
-#         run: |
-#           pytest --verbose -p no:warnings --strict-markers --tb=short --asyncio-mode=auto
-#       # - name: Test with Pytest-Cov
-#       #   run: |
-#       #     pytest --cov --cov-report xml .
+  # Database - Postgres
+  POSTGRES_DB_PRODUCT: ${{ vars.POSTGRES_DB_PRODUCT }}
+  POSTGRES_DB_ORDER: ${{ vars.POSTGRES_DB_ORDER }}
+  POSTGRES_DB_ACCOUNT: ${{ vars.POSTGRES_DB_ACCOUNT }}
+
+  # This is the host for Docker Postgres Image in docker-compose.yaml
+  POSTGRES_HOST_PRODUCT: ${{ vars.POSTGRES_HOST_PRODUCT }}
+  POSTGRES_HOST_ORDER: ${{ vars.POSTGRES_HOST_ORDER }}
+  POSTGRES_HOST_ACCOUNT: ${{ vars.POSTGRES_HOST_ACCOUNT }}
+
+  # Postgres Ports
+  POSTGRES_PORT_PRODUCT: ${{ vars.POSTGRES_PORT_PRODUCT }}
+  POSTGRES_PORT_PRODUCT_EXT: ${{ vars.POSTGRES_PORT_PRODUCT_EXT }}
+  POSTGRES_PORT_ACCOUNT: ${{ vars.POSTGRES_PORT_ACCOUNT }}
+  POSTGRES_PORT_ACCOUNT_EXT: ${{ vars.POSTGRES_PORT_ACCOUNT_EXT }}
+  POSTGRES_PORT_ORDER: ${{ vars.POSTGRES_PORT_ORDER }}
+  POSTGRES_PORT_ORDER_EXT: ${{ vars.POSTGRES_PORT_ORDER_EXT }}
+
+  # Common postgres config
+  POSTGRES_PASSWORD: ${{ vars.POSTGRES_PASSWORD }}
+  POSTGRES_SCHEMA: ${{ vars.POSTGRES_SCHEMA }}
+  POSTGRES_USERNAME: ${{ vars.POSTGRES_USERNAME }}
+  IS_ALLOWED_CREDENTIALS: ${{ vars.IS_ALLOWED_CREDENTIALS }}
+  API_TOKEN: ${{ vars.API_TOKEN }}
+  AUTH_TOKEN: ${{ vars.AUTH_TOKEN }}
+
+  # Database - SQLAlchemy
+  DB_TIMEOUT: ${{ vars.DB_TIMEOUT }}
+  DB_POOL_SIZE: ${{ vars.DB_POOL_SIZE }}
+  DB_MAX_POOL_CON: ${{ vars.DB_MAX_POOL_CON }}
+  DB_POOL_OVERFLOW: ${{ vars.DB_POOL_OVERFLOW }}
+  IS_DB_ECHO_LOG: ${{ vars.IS_DB_ECHO_LOG }}
+  IS_DB_EXPIRE_ON_COMMIT: ${{ vars.IS_DB_EXPIRE_ON_COMMIT }}
+  IS_DB_FORCE_ROLLBACK: ${{ vars.IS_DB_FORCE_ROLLBACK }}
+
+  # JWT Token
+  JWT_SECRET_KEY: ${{ vars.JWT_SECRET_KEY }}
+  JWT_ALGORITHM: ${{ vars.JWT_ALGORITHM }}
+  JWT_MIN: ${{ vars.JWT_MIN }}
+  JWT_HOUR: ${{ vars.JWT_HOUR }}
+  JWT_DAY: ${{ vars.JWT_DAY }}
+
+  # Hash Functions
+  HASHING_ALGORITHM: ${{ vars.HASHING_ALGORITHM }}
+
+  # Authentication endpoint
+  AUTHENTICATION_ROUTER: ${{ vars.AUTHENTICATION_ROUTER }}
+  AUTHENTICATION_ENDPOINT: ${{ vars.AUTHENTICATION_ENDPOINT }}
+
+jobs:
+  code_format:
+    name: "Code Format 🎨"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: set up Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r order/requirements.txt
+      - name: Run black
+        run: |
+          black . --check --config=pyproject.toml
+      - name: Run ruff
+        run: |
+          python -m pip install ruff
+          ruff check --config=pyproject.toml
+  test:
+    name: "Test 🧪"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Test Product
+        uses: adambirds/docker-compose-action@v1.3.0
+        with:
+          compose-file: "./docker-compose.yaml"
+          services: |
+            product_db
+            product
+          test-container: product
+          test-command: "pytest"
+      - name: Test Order
+        uses: adambirds/docker-compose-action@v1.3.0
+        with:
+          compose-file: "./docker-compose.yaml"
+          services: |
+            order_db
+            order
+          test-container: order
+          test-command: "pytest"
+      - name: Test Account
+        uses: adambirds/docker-compose-action@v1.3.0
+        with:
+          compose-file: "./docker-compose.yaml"
+          services: |
+            account_db
+            account
+          test-container: account
+          test-command: "pytest"
