@@ -13,6 +13,7 @@ def populate_user_table():
         try:
             # Define the SQL statement
             populate_query = """
+            DELETE FROM users;
             INSERT INTO users(name,
                             email,
                             hashed_password,

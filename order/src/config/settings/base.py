@@ -9,7 +9,6 @@ class OrderBaseSettings(pydantic_settings.BaseSettings):
     VERSION: str = "0.1.0"
     TIMEZONE: str = "UTC+1"
     DESCRIPTION: str | None = None
-    DEBUG: bool = False
 
     SERVER_HOST: str = config("SERVER_HOST", cast=str)  # type: ignore
     SERVER_PORT: int = config("SERVER_PORT", cast=int)  # type: ignore
@@ -67,7 +66,6 @@ class OrderBaseSettings(pydantic_settings.BaseSettings):
         return {
             "title": self.TITLE,
             "version": self.VERSION,
-            "debug": self.DEBUG,
             "description": self.DESCRIPTION,
             "docs_url": self.DOCS_URL,
             "openapi_url": self.OPENAPI_URL,

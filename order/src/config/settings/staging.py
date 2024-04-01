@@ -4,5 +4,5 @@ from src.config.settings.environment import Environment
 
 class OrderStageSettings(OrderBaseSettings):
     DESCRIPTION: str | None = "Test Environment."
-    DEBUG: bool = True
+
     ENVIRONMENT: Environment = Environment.STAGING

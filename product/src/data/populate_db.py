@@ -13,6 +13,7 @@ def populate_product_table():
         try:
             # Define the SQL statement
             populate_query = """
+            DELETE FROM products;
             INSERT INTO products(name, description, price, stock, category_id)
             VALUES ('product1', 'description1', 22.3, 5, 1),
                 ('product2', 'description2', 2.3, 10, 2),
