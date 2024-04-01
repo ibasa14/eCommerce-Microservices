@@ -4,7 +4,6 @@ request has not been completed because it lacks valid authentication credentials
 """
 
 import fastapi
-
 from src.utilities.messages import http_401_unauthorized_details
 
 

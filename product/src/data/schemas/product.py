@@ -1,4 +1,5 @@
 from typing import Optional
+
 from src.data.schemas.base import BaseSchemaModel
 
 

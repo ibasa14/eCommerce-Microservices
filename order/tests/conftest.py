@@ -1,14 +1,15 @@
+import asyncio
+
 import asgi_lifespan
 import fastapi
 import httpx
 import pytest
-from src.main import initialize_order_application
-import asyncio
-from tests.utility.init_db import InitDB
-from src.config.manager import settings
 from src.api.dependencies.session import get_async_session
+from src.config.manager import settings
+from src.main import initialize_order_application
+from tests.utility.init_db import InitDB
 from tests.utility.session import get_async_session_testing
-from tests.utility.token import TEST_USER_TOKEN, TEST_USER_ADMIN_TOKEN
+from tests.utility.token import TEST_USER_ADMIN_TOKEN, TEST_USER_TOKEN
 
 
 # NOTE: this is required to prevent ScopeMismatch error
@@ -38,9 +39,9 @@ def order_test_app() -> fastapi.FastAPI:
     A fixture that re-initializes the FastAPI instance for test application.
     """
     testing_app = initialize_order_application()
-    testing_app.dependency_overrides[
-        get_async_session
-    ] = get_async_session_testing
+    testing_app.dependency_overrides[get_async_session] = (
+        get_async_session_testing
+    )
     return testing_app
 
 

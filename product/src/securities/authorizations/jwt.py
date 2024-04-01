@@ -1,11 +1,9 @@
-import datetime
-
 import pydantic
-from jose import jwt as jose_jwt, JWTError as JoseJWTError
-
+from jose import JWTError as JoseJWTError
+from jose import jwt as jose_jwt
 from src.config.manager import settings
-from src.data.schemas.user import UserInResponse
 from src.data.schemas.jwt import JWTUser
+from src.data.schemas.user import UserInResponse
 
 
 class JWTRetriever:

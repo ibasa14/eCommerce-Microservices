@@ -1,11 +1,9 @@
 import datetime
 
-import pydantic
 from jose import jwt as jose_jwt
-
 from src.config.manager import settings
+from src.data.schemas.jwt import JWToken, JWTUser
 from src.data.schemas.user import User
-from src.data.schemas.jwt import JWTUser, JWToken
 from src.utilities.exceptions.database import EntityDoesNotExist
 
 

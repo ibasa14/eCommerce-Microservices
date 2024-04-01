@@ -1,14 +1,15 @@
+import asyncio
+
 import asgi_lifespan
 import fastapi
 import httpx
 import pytest
-from src.main import initialize_product_application
-import asyncio
-from tests.utility.init_db import InitDB
-from src.config.manager import settings
 from src.api.dependencies.session import get_async_session
+from src.config.manager import settings
+from src.main import initialize_product_application
+from tests.utility.init_db import InitDB
 from tests.utility.session import get_async_session_testing
-from tests.utility.token import TEST_USER_TOKEN, TEST_USER_ADMIN_TOKEN
+from tests.utility.token import TEST_USER_ADMIN_TOKEN, TEST_USER_TOKEN
 
 
 # NOTE: this is required to prevent ScopeMismatch error

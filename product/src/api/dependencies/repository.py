@@ -1,15 +1,11 @@
 import typing
-
-import fastapi
-from sqlalchemy.ext.asyncio import (
-    AsyncSession as SQLAlchemyAsyncSession,
-)
 from typing import TypeVar
 
-from src.data.database import SqlAlchemyBase
-
+import fastapi
+from sqlalchemy.ext.asyncio import AsyncSession as SQLAlchemyAsyncSession
 from src.api.dependencies.session import get_async_session
 from src.crud.base import BaseCRUD
+from src.data.database import SqlAlchemyBase
 
 ModelType = TypeVar("ModelType", bound=SqlAlchemyBase)
 

@@ -1,5 +1,4 @@
 import fastapi
-
 import src
 from src.main import app
 

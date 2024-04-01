@@ -5,7 +5,6 @@ cannot or will not process the request due to something that is perceivedto be a
 """
 
 import fastapi
-
 from src.utilities.messages import (
     http_400_email_details,
     http_400_sigin_credentials_details,

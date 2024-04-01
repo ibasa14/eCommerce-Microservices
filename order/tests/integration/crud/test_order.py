@@ -1,9 +1,9 @@
+from unittest import mock
+from unittest.mock import AsyncMock
+
 import httpx
 import pytest
 from src.constants import ORDER_ROUTER_URL
-from unittest import mock
-from unittest.mock import AsyncMock
-from unittest import mock
 
 
 @pytest.fixture

@@ -1,18 +1,17 @@
-from src.config.manager import settings
-from sqlalchemy import create_engine, Engine
-from sqlalchemy_utils import database_exists, create_database, drop_database
-import pandas as pd
-from alembic.config import Config
-from alembic import command
-from pathlib import Path
 import os
+from pathlib import Path
+
+import pandas as pd
+from alembic import command
+from alembic.config import Config
+from sqlalchemy import Engine, create_engine
+from sqlalchemy_utils import create_database, database_exists, drop_database
+from src.config.manager import settings
 
 
 class InitDB:
     def __init__(self):
-        self.db_uri: str = (
-            f"{settings.DB_POSTGRES_SCHEMA}://{settings.DB_POSTGRES_USERNAME}:{settings.DB_POSTGRES_PASSWORD}@{settings.DB_POSTGRES_HOST}:{settings.DB_POSTGRES_PORT}/postgres_product_testing"
-        )
+        self.db_uri: str = f"{settings.DB_POSTGRES_SCHEMA}://{settings.DB_POSTGRES_USERNAME}:{settings.DB_POSTGRES_PASSWORD}@{settings.DB_POSTGRES_HOST}:{settings.DB_POSTGRES_PORT}/postgres_product_testing"
         if database_exists(self.db_uri):
             drop_database(self.db_uri)
         create_database(self.db_uri)

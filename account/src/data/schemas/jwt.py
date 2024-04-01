@@ -1,7 +1,7 @@
 import datetime
+from typing import Optional
 
 import pydantic
-from typing import Optional
 
 
 class JWToken(pydantic.BaseModel):

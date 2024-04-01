@@ -1,14 +1,12 @@
 import pydantic
+from sqlalchemy.ext.asyncio import AsyncEngine as SQLAlchemyAsyncEngine
+from sqlalchemy.ext.asyncio import AsyncSession as SQLAlchemyAsyncSession
 from sqlalchemy.ext.asyncio import (
-    AsyncEngine as SQLAlchemyAsyncEngine,
-    AsyncSession as SQLAlchemyAsyncSession,
     create_async_engine as create_sqlalchemy_async_engine,
 )
-from sqlalchemy.pool import (
-    Pool as SQLAlchemyPool,
-    QueuePool as SQLAlchemyQueuePool,
-)
 from sqlalchemy.orm import declarative_base
+from sqlalchemy.pool import Pool as SQLAlchemyPool
+from sqlalchemy.pool import QueuePool as SQLAlchemyQueuePool
 from src.config.manager import settings
 
 

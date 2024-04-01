@@ -2,7 +2,6 @@ import typing
 from functools import lru_cache
 
 import decouple
-
 from src.config.settings.base import ProductBaseSettings
 from src.config.settings.development import ProductDevSettings
 from src.config.settings.environment import Environment

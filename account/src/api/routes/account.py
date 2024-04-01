@@ -1,14 +1,12 @@
 import fastapi
-from src.api.dependencies.repository import get_repository
-import src.data.schemas.user as UserSchema
-from src.constants import ACCOUNT_ROUTER_URL
-from src.data.models import User
-from src.crud.user import UserCRUD
-from src.utilities.exceptions.database import EntityDoesNotExist
-from src.utilities.exceptions.http.exc_400 import (
-    http_400_exc_bad_email_request,
-)
 import pydantic
+import src.data.schemas.user as UserSchema
+from src.api.dependencies.repository import get_repository
+from src.constants import ACCOUNT_ROUTER_URL
+from src.crud.user import UserCRUD
+from src.data.models import User
+from src.utilities.exceptions.database import EntityDoesNotExist
+from src.utilities.exceptions.http.exc_400 import http_400_exc_bad_email_request
 
 router = fastapi.APIRouter(prefix=ACCOUNT_ROUTER_URL, tags=["account"])
 

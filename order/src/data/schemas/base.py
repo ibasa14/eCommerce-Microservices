@@ -1,9 +1,7 @@
 import datetime
-import pydantic
 
-from src.utilities.formatters import (
-    format_datetime_into_isoformat,
-)
+import pydantic
+from src.utilities.formatters import format_datetime_into_isoformat
 
 
 class BaseSchemaModel(pydantic.BaseModel):

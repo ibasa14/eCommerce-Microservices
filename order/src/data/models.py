@@ -1,8 +1,7 @@
-import enum
-
-from sqlalchemy import Column, Float, ForeignKey, Integer, String, DateTime
+from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
+
 from .database import SqlAlchemyBase  # type: ignore
 
 

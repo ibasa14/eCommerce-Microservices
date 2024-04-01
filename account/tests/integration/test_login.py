@@ -25,8 +25,8 @@ async def test_login(
     assert request.status_code == 200
     assert request_json["authorized_account"]["name"] == "test_user"
     assert request_json["authorized_account"]["email"] == "test_user@ibc.com"
-    assert request_json["authorized_account"]["is_active"] == True
-    assert request_json["authorized_account"]["is_logged_in"] == False
+    assert request_json["authorized_account"]["is_active"]
+    assert not request_json["authorized_account"]["is_logged_in"]
     assert request_json["authorized_account"]["role_id"] == 2
 
 
@@ -52,8 +52,8 @@ async def test_login_admin(
     assert (
         request_json["authorized_account"]["email"] == "test_user_admin@ibc.com"
     )
-    assert request_json["authorized_account"]["is_active"] == True
-    assert request_json["authorized_account"]["is_logged_in"] == False
+    assert request_json["authorized_account"]["is_active"]
+    assert not request_json["authorized_account"]["is_logged_in"]
     assert request_json["authorized_account"]["role_id"] == 1
 
 

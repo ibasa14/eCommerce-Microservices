@@ -1,9 +1,7 @@
-from typing import List
 import datetime
+
 from src.data.schemas.base import BaseSchemaModel
-from src.data.schemas.order_detail import (
-    OrderDetailForSpecificOrder,
-)
+from src.data.schemas.order_detail import OrderDetailForSpecificOrder
 
 
 class Order(BaseSchemaModel):

@@ -1,10 +1,6 @@
 import httpx
 import pytest
 from src.constants import DEFAULT_PNG_NAME, PRODUCT_ROUTER_URL
-from typing import Dict, Any
-from unittest import mock
-from dataclasses import dataclass
-import pydantic
 
 
 @pytest.fixture
@@ -136,26 +132,30 @@ async def test_crud_products(
     assert response_create_product.status_code == 401
 
     response_create_product = await async_authenticated_client.put(
-        api_product_url+"/inventory/substract",
-        json=[{
-            "id": 2,
-            "quantity": 1,
-        }],
+        api_product_url + "/inventory/substract",
+        json=[
+            {
+                "id": 2,
+                "quantity": 1,
+            }
+        ],
         headers={"Content-Type": "application/json"},
     )
     assert response_create_product.status_code == 200
-    assert response_create_product.json() == True
+    assert response_create_product.json()
 
     response_create_product = await async_authenticated_client.put(
-        api_product_url+"/inventory/substract",
-        json=[{
-            "id": 2,
-            "quantity": 5,
-        }],
+        api_product_url + "/inventory/substract",
+        json=[
+            {
+                "id": 2,
+                "quantity": 5,
+            }
+        ],
         headers={"Content-Type": "application/json"},
     )
     assert response_create_product.status_code == 200
-    assert response_create_product.json() == False
+    assert not response_create_product.json()
 
 
 @pytest.mark.asyncio

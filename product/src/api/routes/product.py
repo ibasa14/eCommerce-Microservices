@@ -1,21 +1,19 @@
+from enum import Enum
+from typing import Annotated, Dict, List
+
 import fastapi
-from typing import List, Dict
-from src.api.dependencies.repository import get_repository
-from src.api.dependencies.authentication import get_current_active_user
 import src.data.schemas.product as ProductSchema
 import src.data.schemas.user as UserSchema
-from src.data.models import Product
+from src.api.dependencies.authentication import get_current_active_user
+from src.api.dependencies.repository import get_repository
+from src.constants import PRODUCT_ROUTER_URL
 from src.crud.product import ProductCRUD
+from src.data.models import Product
 from src.utilities.exceptions.database import EntityDoesNotExist
 from src.utilities.exceptions.http.exc_404 import (
     http_404_exc_id_not_found_request,
 )
-from src.utilities.exceptions.http.exc_410 import (
-    http_410_product_gone,
-)
-from src.constants import PRODUCT_ROUTER_URL
-from typing import Annotated
-from enum import Enum
+from src.utilities.exceptions.http.exc_410 import http_410_product_gone
 
 router = fastapi.APIRouter(prefix=PRODUCT_ROUTER_URL, tags=["product"])
 
@@ -191,7 +189,10 @@ async def inventory_substract(
         updated_db_products = await product_crud.subtract_from_inventory(
             products_to_substract
         )
-        return [ProductSchema.ProductInResponse(**product.to_dict()) for product in updated_db_products]
+        return [
+            ProductSchema.ProductInResponse(**product.to_dict())
+            for product in updated_db_products
+        ]
     except Exception:
         raise await http_410_product_gone()
 

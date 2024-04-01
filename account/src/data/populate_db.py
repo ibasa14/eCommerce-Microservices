@@ -1,5 +1,6 @@
-import psycopg2
 import os
+
+import psycopg2
 
 
 def populate_user_table():

@@ -1,17 +1,17 @@
-import fastapi
 from typing import Annotated
-from src.api.dependencies.repository import get_repository
+
+import fastapi
 import src.data.schemas.user as UserSchema
-from src.data.models import User
-from src.crud.user import UserCRUD
-from fastapi.security import OAuth2PasswordRequestForm
 from fastapi import Depends
+from fastapi.security import OAuth2PasswordRequestForm
+from src.api.dependencies.repository import get_repository
+from src.config.manager import settings
+from src.crud.user import UserCRUD
+from src.data.models import User
+from src.securities.authentication.jwt import jwt_generator
 from src.utilities.exceptions.http.exc_400 import (
     http_exc_400_credentials_bad_signin_request,
-    http_exc_400_credentials_bad_signup_request,
 )
-from src.securities.authentication.jwt import jwt_generator
-from src.config.manager import settings
 
 router = fastapi.APIRouter(
     prefix=settings.AUTHENTICATION_ROUTER, tags=["authentication"]

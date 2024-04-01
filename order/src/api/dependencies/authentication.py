@@ -1,15 +1,14 @@
-from fastapi.security import OAuth2PasswordBearer, SecurityScopes
-from src.config.manager import settings
+from typing import Annotated
+
 import fastapi
+from fastapi.security import OAuth2PasswordBearer, SecurityScopes
+from jose import JWTError
+from src.config.manager import settings
+from src.data.schemas.jwt import JWTUser
+from src.securities.authorizations.jwt import jwt_retriever
 from src.utilities.exceptions.http.exc_403 import (
     http_403_exc_not_active_account,
 )
-from typing import Annotated
-from jose import JWTError
-from src.data.schemas.user import User
-from src.data.schemas.jwt import JWTUser
-from src.securities.authorizations.jwt import jwt_retriever
-import httpx
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=settings.AUTHENTICATION_URL)
 
@@ -34,7 +33,9 @@ async def get_current_user(
                 status_code=fastapi.status.HTTP_401_UNAUTHORIZED,
                 detail="Not enough permissions",
                 headers={
-                    "WWW-Authenticate": f"Bearer scope={security_scopes.scope_str}"
+                    "WWW-Authenticate": (
+                        f"Bearer scope={security_scopes.scope_str}"
+                    )
                 },
             )
     return jwt_user

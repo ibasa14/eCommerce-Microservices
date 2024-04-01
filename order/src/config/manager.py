@@ -2,7 +2,6 @@ import typing
 from functools import lru_cache
 
 import decouple
-
 from src.config.settings.base import OrderBaseSettings
 from src.config.settings.development import OrderDevSettings
 from src.config.settings.environment import Environment

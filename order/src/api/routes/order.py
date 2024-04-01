@@ -1,12 +1,17 @@
+from enum import Enum
+from typing import Annotated, Dict, List
+
 import fastapi
-from typing import List, Dict
-from src.api.dependencies.repository import get_repository
-from src.api.dependencies.authentication import get_current_active_user
+import httpx
+import src.data.schemas.jwt as JWTSchema
 import src.data.schemas.order as OrderSchema
 import src.data.schemas.order_detail as OrderDetailSchema
-import src.data.schemas.jwt as JWTSchema
-from src.data.models import Order
+from src.api.dependencies.authentication import get_current_active_user
+from src.api.dependencies.repository import get_repository
+from src.celery_worker import send_email
+from src.constants import ORDER_ROUTER_URL
 from src.crud.order import OrderCRUD
+from src.data.models import Order
 from src.utilities.exceptions.database import EntityDoesNotExist
 from src.utilities.exceptions.http.exc_404 import (
     http_404_exc_id_not_found_request,
@@ -14,11 +19,6 @@ from src.utilities.exceptions.http.exc_404 import (
 from src.utilities.exceptions.http.exc_409 import (
     http_409_exc_conflict_not_available_product,
 )
-from src.constants import ORDER_ROUTER_URL
-from typing import Annotated
-from enum import Enum
-import httpx
-from src.celery_worker import send_email
 
 router = fastapi.APIRouter(prefix=ORDER_ROUTER_URL, tags=["order"])
 

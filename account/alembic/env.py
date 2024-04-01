@@ -3,11 +3,12 @@ import pathlib
 
 os.chdir(pathlib.Path(__file__).parent.parent.resolve())
 
-from alembic import context
 from logging.config import fileConfig
-from src.config.manager import settings
+
+from alembic import context
 from sqlalchemy import engine_from_config, pool
-from sqlalchemy_utils import database_exists, create_database
+from sqlalchemy_utils import create_database, database_exists
+from src.config.manager import settings
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -25,7 +26,9 @@ config.set_section_option(
 )
 config.set_section_option(section, "POSTGRES_HOST", settings.DB_POSTGRES_HOST)
 config.set_section_option(section, "POSTGRES_DB", settings.DB_POSTGRES_NAME)
-config.set_section_option(section, "POSTGRES_PORT", str(settings.DB_POSTGRES_PORT))
+config.set_section_option(
+    section, "POSTGRES_PORT", str(settings.DB_POSTGRES_PORT)
+)
 
 
 from src.data.database import SqlAlchemyBase

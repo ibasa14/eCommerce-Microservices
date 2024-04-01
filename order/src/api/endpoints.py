@@ -1,5 +1,4 @@
 import fastapi
-
 from src.api.routes.order import router as order_router
 
 router = fastapi.APIRouter()

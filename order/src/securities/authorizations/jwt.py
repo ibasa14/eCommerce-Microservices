@@ -1,11 +1,9 @@
-import datetime
-
 import pydantic
-from jose import jwt as jose_jwt, JWTError as JoseJWTError
-
+from jose import JWTError as JoseJWTError
+from jose import jwt as jose_jwt
 from src.config.manager import settings
-from src.data.schemas.user import UserInResponse
 from src.data.schemas.jwt import JWTUser
+from src.data.schemas.user import UserInResponse
 
 
 class JWTRetriever:
@@ -24,7 +22,7 @@ class JWTRetriever:
             payload = jose_jwt.decode(
                 token=token, key=self.secret_key, algorithms=[self.algorithm]
             )
-            attrs = payload | {"token":token}
+            attrs = payload | {"token": token}
             jwt_user = JWTUser(**attrs)
 
         except JoseJWTError as token_decode_error:

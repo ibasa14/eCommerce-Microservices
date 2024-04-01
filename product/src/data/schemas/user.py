@@ -1,5 +1,4 @@
 import pydantic
-
 from src.data.schemas.base import BaseSchemaModel
 
 

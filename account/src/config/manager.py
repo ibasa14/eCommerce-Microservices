@@ -2,7 +2,6 @@ import typing
 from functools import lru_cache
 
 import decouple
-
 from src.config.settings.base import AuthenticationBaseSettings
 from src.config.settings.development import AuthenticationDevSettings
 from src.config.settings.environment import Environment

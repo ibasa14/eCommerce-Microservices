@@ -1,16 +1,15 @@
+from typing import List, Optional, Sequence
+
+import httpx
 import sqlalchemy
-from sqlalchemy.orm import joinedload, selectinload
-from src.data.models import Order, OrderDetail
+from sqlalchemy.orm import joinedload
+from src.config.manager import settings
 from src.crud.base import BaseCRUD
+from src.data.models import Order, OrderDetail
 from src.data.schemas.order import OrderWithDetails
 from src.data.schemas.order_detail import OrderDetailForSpecificOrder
 from src.data.schemas.product import ProductToSubstract
-from src.utilities.exceptions.database import (
-    EntityDoesNotExist,
-)
-from typing import Optional, Sequence, List
-import httpx
-from src.config.manager import settings
+from src.utilities.exceptions.database import EntityDoesNotExist
 
 
 class OrderCRUD(BaseCRUD):
@@ -77,7 +76,6 @@ class OrderCRUD(BaseCRUD):
         user_id: int,
         token: str,
     ) -> Order | None:
-
         # update inventory
         inventory_updated_response = await self._is_product_updated(
             payload=[

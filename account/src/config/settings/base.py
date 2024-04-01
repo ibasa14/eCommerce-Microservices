@@ -1,7 +1,6 @@
 import logging
 
 import pydantic_settings
-
 from decouple import config
 
 

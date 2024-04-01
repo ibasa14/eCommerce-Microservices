@@ -1,2 +1,1 @@
-from . import base
-from . import product
+from . import base, product  # noqa: F401

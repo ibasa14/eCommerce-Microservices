@@ -1,12 +1,12 @@
 import enum
 
 from sqlalchemy import (
+    CheckConstraint,
     Column,
     Float,
     ForeignKey,
     Integer,
     String,
-    CheckConstraint,
 )
 from sqlalchemy.orm import relationship
 

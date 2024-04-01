@@ -1,10 +1,9 @@
-from sqlalchemy.ext.asyncio import AsyncSession as SQLAlchemyAsyncSession
-from typing import TypeVar, Type, Any, Optional, Sequence
-from src.data.database import SqlAlchemyBase
+from typing import Any, Optional, Sequence, Type, TypeVar
+
 import sqlalchemy
-from src.utilities.exceptions.database import (
-    EntityDoesNotExist,
-)
+from sqlalchemy.ext.asyncio import AsyncSession as SQLAlchemyAsyncSession
+from src.data.database import SqlAlchemyBase
+from src.utilities.exceptions.database import EntityDoesNotExist
 
 ModelType = TypeVar("ModelType", bound=SqlAlchemyBase)
 
@@ -46,7 +45,10 @@ class BaseCRUD:
         await self.async_session.execute(statement=stmt)
         await self.async_session.commit()
 
-        return f"{self.model.__class__.__name__} with id '{id}' is successfully deleted!"
+        return (
+            f"{self.model.__class__.__name__} with id '{id}' is successfully"
+            " deleted!"
+        )
 
     async def delete_multiple(self) -> str:
         stmt = sqlalchemy.delete(table=self.model)

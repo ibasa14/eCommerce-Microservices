@@ -24,26 +24,44 @@ repository = "https://github.com/ibasa14/eCommerce-Microservices"
 
 [tool.black]
 color=true
-exclude = '''
-    /(
-        \.git
-        | \._build
-        | \.back.out
-        | \.build
-        | \.coverage
-        | \.dist
-        | \.hg
-        | \.mypy_cache
-        | \.tox
-        | \.venv
-        | ./src/coverage
-        | blib2to3
-        | tests/data
-        | alembic/
-    )/
-'''
+force-exclude = '/dev /env *.ipynb'
 include = '\.pyi?$'
 line-length = 80
+preview = true
+
+[tool.ruff]
+force-exclude=true
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+    "alembic"
+]
+line-length = 80
+ignore = ["E501"]
 
 [tool.pytest.ini_options]
 python_files = ["test_*.py", "*_test.py"]

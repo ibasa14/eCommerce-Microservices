@@ -1,5 +1,4 @@
 import fastapi
-
 from src.api.routes.authentication import router as login_router
 
 router = fastapi.APIRouter()

@@ -3,7 +3,6 @@ The HTTP 403 Forbidden response status code indicates that the server understand
 """
 
 import fastapi
-
 from src.utilities.messages import http_403_forbidden_details
 
 

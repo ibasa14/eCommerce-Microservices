@@ -1,25 +1,20 @@
 import sqlalchemy
-
+from fastapi.security import OAuth2PasswordRequestForm
+from src.crud.base import BaseCRUD
 from src.data.models import User
+from src.data.schemas.user import User as UserSchema
 from src.data.schemas.user import (
     UserInCreate,
-    UserOutCreate,
     UserInUpdate,
-    UserWithToken,
-    User as UserSchema
+    UserOutCreate,
 )
-from src.crud.base import BaseCRUD
 from src.securities.hashing.password import password_generator
-
 from src.securities.verification.credentials import credential_verifier
-
 from src.utilities.exceptions.database import (
     EntityAlreadyExists,
     EntityDoesNotExist,
 )
-
 from src.utilities.exceptions.password import PasswordDoesNotMatch
-from fastapi.security import OAuth2PasswordRequestForm
 
 
 class UserCRUD(BaseCRUD):

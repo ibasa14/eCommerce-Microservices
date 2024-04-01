@@ -3,7 +3,6 @@ The HTTP 404 Not Found response status code indicates that the server cannot fin
 """
 
 import fastapi
-
 from src.utilities.messages import (
     http_404_email_details,
     http_404_id_details,

@@ -1,10 +1,4 @@
-from sqlalchemy import (
-    Boolean,
-    Column,
-    ForeignKey,
-    Integer,
-    String,
-)
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from .database import SqlAlchemyBase  # type: ignore
@@ -34,6 +28,7 @@ class User(SqlAlchemyBase):  # type: ignore
             "is_logged_in": self.is_logged_in,
             "role_id": self.role_id,
         }
+
 
 class Role(SqlAlchemyBase):  # type: ignore
     __tablename__: str = "roles"
