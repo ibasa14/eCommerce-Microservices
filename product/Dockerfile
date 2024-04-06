@@ -31,9 +31,8 @@ RUN pip3 install -r requirements.txt
 # Copy all files
 COPY . .
 
-# Copy entrypoint.sh for auto connection with account_db service
-COPY ./entrypoint.sh .
+# Make entrypoint.sh executable
 RUN chmod +x /usr/product/entrypoint.sh
 
 # Execute entrypoint.sh
-ENTRYPOINT ["/usr/product/entrypoint.sh" ]
+CMD ["/usr/product/entrypoint.sh" ]

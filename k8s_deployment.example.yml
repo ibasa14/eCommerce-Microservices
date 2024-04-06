@@ -1,0 +1,842 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yaml -o k8s_deployment.yml
+    kompose.image-pull-policy: Never
+    kompose.version: 1.32.0 (765fde254)
+  labels:
+    io.kompose.service: account
+  name: account
+spec:
+  ports:
+    - name: "8003"
+      port: 8003
+      targetPort: 8002
+    - name: "8002"
+      port: 8002
+      targetPort: 8002
+  selector:
+    io.kompose.service: account
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yaml -o k8s_deployment.yml
+    kompose.version: 1.32.0 (765fde254)
+  labels:
+    io.kompose.service: account-db
+  name: account-db
+spec:
+  ports:
+    - name: "5435"
+      port: 5435
+      targetPort: 5434
+    - name: "5434"
+      port: 5434
+      targetPort: 5434
+  selector:
+    io.kompose.service: account-db
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yaml -o k8s_deployment.yml
+    kompose.version: 1.32.0 (765fde254)
+  labels:
+    io.kompose.service: flower
+  name: flower
+spec:
+  ports:
+    - name: "5555"
+      port: 5555
+      targetPort: 5555
+  selector:
+    io.kompose.service: flower
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yaml -o k8s_deployment.yml
+    kompose.image-pull-policy: Never
+    kompose.version: 1.32.0 (765fde254)
+  labels:
+    io.kompose.service: order
+  name: order
+spec:
+  ports:
+    - name: "8005"
+      port: 8005
+      targetPort: 8004
+    - name: "8004"
+      port: 8004
+      targetPort: 8004
+  selector:
+    io.kompose.service: order
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yaml -o k8s_deployment.yml
+    kompose.version: 1.32.0 (765fde254)
+  labels:
+    io.kompose.service: order-db
+  name: order-db
+spec:
+  ports:
+    - name: "5437"
+      port: 5437
+      targetPort: 5436
+    - name: "5436"
+      port: 5436
+      targetPort: 5436
+  selector:
+    io.kompose.service: order-db
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yaml -o k8s_deployment.yml
+    kompose.image-pull-policy: Never
+    kompose.version: 1.32.0 (765fde254)
+  labels:
+    io.kompose.service: product
+  name: product
+spec:
+  ports:
+    - name: "8001"
+      port: 8001
+      targetPort: 8000
+    - name: "8000"
+      port: 8000
+      targetPort: 8000
+  selector:
+    io.kompose.service: product
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yaml -o k8s_deployment.yml
+    kompose.version: 1.32.0 (765fde254)
+  labels:
+    io.kompose.service: product-db
+  name: product-db
+spec:
+  ports:
+    - name: "5433"
+      port: 5433
+      targetPort: 5432
+    - name: "5432"
+      port: 5432
+      targetPort: 5432
+  selector:
+    io.kompose.service: product-db
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yaml -o k8s_deployment.yml
+    kompose.version: 1.32.0 (765fde254)
+  labels:
+    io.kompose.service: rabbitmq-broker-celery
+  name: rabbitmq-broker-celery
+spec:
+  ports:
+    - name: "5672"
+      port: 5672
+      targetPort: 5672
+    - name: "15672"
+      port: 15672
+      targetPort: 15672
+  selector:
+    io.kompose.service: rabbitmq-broker-celery
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yaml -o k8s_deployment.yml
+    kompose.version: 1.32.0 (765fde254)
+  labels:
+    io.kompose.service: redis-backend-celery
+  name: redis-backend-celery
+spec:
+  ports:
+    - name: "6379"
+      port: 6379
+      targetPort: 6379
+  selector:
+    io.kompose.service: redis-backend-celery
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yaml -o k8s_deployment.yml
+    kompose.image-pull-policy: Never
+    kompose.version: 1.32.0 (765fde254)
+  labels:
+    io.kompose.service: account
+  name: account
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: account
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f docker-compose.yaml -o k8s_deployment.yml
+        kompose.image-pull-policy: Never
+        kompose.version: 1.32.0 (765fde254)
+      labels:
+        io.kompose.network/ecommerce-microservices-default: "true"
+        io.kompose.service: account
+    spec:
+      containers:
+        - env:
+            - name: API_TOKEN
+              value: YOUR-API-TOKEN
+            - name: AUTHENTICATION_ROUTER
+              value: /authentication
+            - name: AUTH_TOKEN
+              value: YOUR-AUTHENTICATION-TOKEN
+            - name: DB_MAX_POOL_CON
+              value: "80"
+            - name: DB_POOL_OVERFLOW
+              value: "20"
+            - name: DB_POOL_SIZE
+              value: "100"
+            - name: DB_TIMEOUT
+              value: "5"
+            - name: ENVIRONMENT
+              value: DEV
+            - name: HASHING_ALGORITHM
+              value: bcrypt
+            - name: IS_ALLOWED_CREDENTIALS
+              value: "True"
+            - name: IS_DB_ECHO_LOG
+              value: "True"
+            - name: IS_DB_EXPIRE_ON_COMMIT
+              value: "False"
+            - name: IS_DB_FORCE_ROLLBACK
+              value: "True"
+            - name: JWT_ALGORITHM
+              value: HS256
+            - name: JWT_DAY
+              value: "6"
+            - name: JWT_HOUR
+              value: "23"
+            - name: JWT_MIN
+              value: "60"
+            - name: JWT_SECRET_KEY
+              value: 09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7
+            - name: POSTGRES_DB
+              value: postgres_account
+            - name: POSTGRES_HOST
+              value: account-db
+            - name: POSTGRES_PASSWORD
+              value: mysecurepassword
+            - name: POSTGRES_PORT
+              value: "5434"
+            - name: POSTGRES_SCHEMA
+              value: postgresql
+            - name: POSTGRES_USERNAME
+              value: postgres
+            - name: SERVER_HOST
+              value: account
+            - name: SERVER_PORT
+              value: "8002"
+            - name: SERVER_WORKERS
+              value: "4"
+          image: ecommerce-microservices_account:latest
+          imagePullPolicy: Never
+          name: account
+          ports:
+            - containerPort: 8002
+              hostPort: 8003
+              protocol: TCP
+      restartPolicy: Always
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yaml -o k8s_deployment.yml
+    kompose.version: 1.32.0 (765fde254)
+  labels:
+    io.kompose.service: account-db
+  name: account-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: account-db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f docker-compose.yaml -o k8s_deployment.yml
+        kompose.version: 1.32.0 (765fde254)
+      labels:
+        io.kompose.network/ecommerce-microservices-default: "true"
+        io.kompose.service: account-db
+    spec:
+      containers:
+        - args:
+            - -p
+            - "5434"
+          env:
+            - name: PGDATA
+              value: /var/lib/postgresql/data/
+            - name: POSTGRES_DB
+              value: postgres_account
+            - name: POSTGRES_PASSWORD
+              value: mysecurepassword
+            - name: POSTGRES_USER
+              value: postgres
+          image: postgres:latest
+          name: account-db
+          ports:
+            - containerPort: 5434
+              hostPort: 5435
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgresql-account-db-data
+      restartPolicy: Always
+      volumes:
+        - name: postgresql-account-db-data
+          persistentVolumeClaim:
+            claimName: postgresql-account-db-data
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    io.kompose.service: postgresql-account-db-data
+  name: postgresql-account-db-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yaml -o k8s_deployment.yml
+    kompose.image-pull-policy: Never
+    kompose.version: 1.32.0 (765fde254)
+  labels:
+    io.kompose.service: celery-worker
+  name: celery-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: celery-worker
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f docker-compose.yaml -o k8s_deployment.yml
+        kompose.image-pull-policy: Never
+        kompose.version: 1.32.0 (765fde254)
+      labels:
+        io.kompose.network/ecommerce-microservices-default: "true"
+        io.kompose.service: celery-worker
+    spec:
+      containers:
+        - args:
+            - celery
+            - -A
+            - src.celery_worker
+            - worker
+            - --loglevel=info
+          env:
+            - name: RABBITMQ_HOST
+              value: rabbitmq-broker-celery
+            - name: RABBITMQ_PORT_AMQP
+              value: "5672"
+            - name: REDIS_HOSTNAME
+              value: redis-backend-celery
+            - name: REDIS_PORT
+              value: "6379"
+          image: ecommerce-microservices_celery-worker:latest
+          imagePullPolicy: Never
+          name: celery-worker
+      restartPolicy: Always
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yaml -o k8s_deployment.yml
+    kompose.version: 1.32.0 (765fde254)
+  labels:
+    io.kompose.service: flower
+  name: flower
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: flower
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f docker-compose.yaml -o k8s_deployment.yml
+        kompose.version: 1.32.0 (765fde254)
+      labels:
+        io.kompose.network/ecommerce-microservices-default: "true"
+        io.kompose.service: flower
+    spec:
+      containers:
+        - args:
+            - celery
+            - --broker=amqp://rabbitmq-broker-celery:5672
+            - flower
+            - --port=5555
+          env:
+            - name: FLOWER_PORT
+              value: "5555"
+          image: mher/flower
+          name: flower
+          ports:
+            - containerPort: 5555
+              hostPort: 5555
+              protocol: TCP
+      restartPolicy: Always
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yaml -o k8s_deployment.yml
+    kompose.image-pull-policy: Never
+    kompose.version: 1.32.0 (765fde254)
+  labels:
+    io.kompose.service: order
+  name: order
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: order
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f docker-compose.yaml -o k8s_deployment.yml
+        kompose.image-pull-policy: Never
+        kompose.version: 1.32.0 (765fde254)
+      labels:
+        io.kompose.network/ecommerce-microservices-default: "true"
+        io.kompose.service: order
+    spec:
+      containers:
+        - env:
+            - name: API_TOKEN
+              value: YOUR-API-TOKEN
+            - name: AUTHENTICATION_ENDPOINT
+              value: /login
+            - name: AUTHENTICATION_HOST
+              value: account
+            - name: AUTHENTICATION_PORT
+              value: "8002"
+            - name: AUTHENTICATION_PORT_EXT
+              value: "8003"
+            - name: AUTHENTICATION_ROUTER
+              value: /authentication
+            - name: AUTH_TOKEN
+              value: YOUR-AUTHENTICATION-TOKEN
+            - name: DB_MAX_POOL_CON
+              value: "80"
+            - name: DB_POOL_OVERFLOW
+              value: "20"
+            - name: DB_POOL_SIZE
+              value: "100"
+            - name: DB_TIMEOUT
+              value: "5"
+            - name: ENVIRONMENT
+              value: DEV
+            - name: IS_ALLOWED_CREDENTIALS
+              value: "True"
+            - name: IS_DB_ECHO_LOG
+              value: "True"
+            - name: IS_DB_EXPIRE_ON_COMMIT
+              value: "False"
+            - name: IS_DB_FORCE_ROLLBACK
+              value: "True"
+            - name: JWT_ALGORITHM
+              value: HS256
+            - name: JWT_DAY
+              value: "6"
+            - name: JWT_HOUR
+              value: "23"
+            - name: JWT_MIN
+              value: "60"
+            - name: JWT_SECRET_KEY
+              value: 09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7
+            - name: POSTGRES_DB
+              value: postgres_order
+            - name: POSTGRES_HOST
+              value: order-db
+            - name: POSTGRES_PASSWORD
+              value: mysecurepassword
+            - name: POSTGRES_PORT
+              value: "5436"
+            - name: POSTGRES_SCHEMA
+              value: postgresql
+            - name: POSTGRES_USERNAME
+              value: postgres
+            - name: PRODUCT_HOST
+              value: product
+            - name: PRODUCT_PORT
+              value: "8000"
+            - name: RABBITMQ_HOST
+              value: rabbitmq-broker-celery
+            - name: RABBITMQ_PORT_AMQP
+              value: "5672"
+            - name: REDIS_HOSTNAME
+              value: redis-backend-celery
+            - name: REDIS_PORT
+              value: "6379"
+            - name: SERVER_HOST
+              value: order
+            - name: SERVER_PORT
+              value: "8004"
+            - name: SERVER_WORKERS
+              value: "4"
+          image: ecommerce-microservices_order:latest
+          imagePullPolicy: Never
+          name: order
+          ports:
+            - containerPort: 8004
+              hostPort: 8005
+              protocol: TCP
+      restartPolicy: Always
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yaml -o k8s_deployment.yml
+    kompose.version: 1.32.0 (765fde254)
+  labels:
+    io.kompose.service: order-db
+  name: order-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: order-db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f docker-compose.yaml -o k8s_deployment.yml
+        kompose.version: 1.32.0 (765fde254)
+      labels:
+        io.kompose.network/ecommerce-microservices-default: "true"
+        io.kompose.service: order-db
+    spec:
+      containers:
+        - args:
+            - -p
+            - "5436"
+          env:
+            - name: PGDATA
+              value: /var/lib/postgresql/data/
+            - name: POSTGRES_DB
+              value: postgres_order
+            - name: POSTGRES_PASSWORD
+              value: mysecurepassword
+            - name: POSTGRES_USER
+              value: postgres
+          image: postgres:latest
+          name: order-db
+          ports:
+            - containerPort: 5436
+              hostPort: 5437
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgresql-order-db-data
+      restartPolicy: Always
+      volumes:
+        - name: postgresql-order-db-data
+          persistentVolumeClaim:
+            claimName: postgresql-order-db-data
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    io.kompose.service: postgresql-order-db-data
+  name: postgresql-order-db-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yaml -o k8s_deployment.yml
+    kompose.image-pull-policy: Never
+    kompose.version: 1.32.0 (765fde254)
+  labels:
+    io.kompose.service: product
+  name: product
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: product
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f docker-compose.yaml -o k8s_deployment.yml
+        kompose.image-pull-policy: Never
+        kompose.version: 1.32.0 (765fde254)
+      labels:
+        io.kompose.network/ecommerce-microservices-default: "true"
+        io.kompose.service: product
+    spec:
+      containers:
+        - env:
+            - name: API_TOKEN
+              value: YOUR-API-TOKEN
+            - name: AUTHENTICATION_ENDPOINT
+              value: /login
+            - name: AUTHENTICATION_HOST
+              value: account
+            - name: AUTHENTICATION_PORT
+              value: "8002"
+            - name: AUTHENTICATION_PORT_EXT
+              value: "8003"
+            - name: AUTHENTICATION_ROUTER
+              value: /authentication
+            - name: AUTH_TOKEN
+              value: YOUR-AUTHENTICATION-TOKEN
+            - name: DB_MAX_POOL_CON
+              value: "80"
+            - name: DB_POOL_OVERFLOW
+              value: "20"
+            - name: DB_POOL_SIZE
+              value: "100"
+            - name: DB_TIMEOUT
+              value: "5"
+            - name: ENVIRONMENT
+              value: DEV
+            - name: IS_ALLOWED_CREDENTIALS
+              value: "True"
+            - name: IS_DB_ECHO_LOG
+              value: "True"
+            - name: IS_DB_EXPIRE_ON_COMMIT
+              value: "False"
+            - name: IS_DB_FORCE_ROLLBACK
+              value: "True"
+            - name: JWT_ALGORITHM
+              value: HS256
+            - name: JWT_DAY
+              value: "6"
+            - name: JWT_HOUR
+              value: "23"
+            - name: JWT_MIN
+              value: "60"
+            - name: JWT_SECRET_KEY
+              value: 09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7
+            - name: POSTGRES_DB
+              value: postgres_product
+            - name: POSTGRES_HOST
+              value: product-db
+            - name: POSTGRES_PASSWORD
+              value: mysecurepassword
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: POSTGRES_SCHEMA
+              value: postgresql
+            - name: POSTGRES_USERNAME
+              value: postgres
+            - name: SERVER_HOST
+              value: product
+            - name: SERVER_PORT
+              value: "8000"
+            - name: SERVER_WORKERS
+              value: "4"
+          image: ecommerce-microservices_product:latest
+          imagePullPolicy: Never
+          name: product
+          ports:
+            - containerPort: 8000
+              hostPort: 8001
+              protocol: TCP
+      restartPolicy: Always
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yaml -o k8s_deployment.yml
+    kompose.version: 1.32.0 (765fde254)
+  labels:
+    io.kompose.service: product-db
+  name: product-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: product-db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f docker-compose.yaml -o k8s_deployment.yml
+        kompose.version: 1.32.0 (765fde254)
+      labels:
+        io.kompose.network/ecommerce-microservices-default: "true"
+        io.kompose.service: product-db
+    spec:
+      containers:
+        - env:
+            - name: PGDATA
+              value: /var/lib/postgresql/data/
+            - name: POSTGRES_DB
+              value: postgres_product
+            - name: POSTGRES_PASSWORD
+              value: mysecurepassword
+            - name: POSTGRES_USER
+              value: postgres
+          image: postgres:latest
+          name: product-db
+          ports:
+            - containerPort: 5432
+              hostPort: 5433
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgresql-product-db-data
+      restartPolicy: Always
+      volumes:
+        - name: postgresql-product-db-data
+          persistentVolumeClaim:
+            claimName: postgresql-product-db-data
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    io.kompose.service: postgresql-product-db-data
+  name: postgresql-product-db-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yaml -o k8s_deployment.yml
+    kompose.version: 1.32.0 (765fde254)
+  labels:
+    io.kompose.service: rabbitmq-broker-celery
+  name: rabbitmq-broker-celery
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: rabbitmq-broker-celery
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f docker-compose.yaml -o k8s_deployment.yml
+        kompose.version: 1.32.0 (765fde254)
+      labels:
+        io.kompose.network/ecommerce-microservices-default: "true"
+        io.kompose.service: rabbitmq-broker-celery
+    spec:
+      containers:
+        - image: rabbitmq:3-management
+          name: rabbitmq-broker-celery
+          ports:
+            - containerPort: 5672
+              hostPort: 5672
+              protocol: TCP
+            - containerPort: 15672
+              hostPort: 15672
+              protocol: TCP
+      hostname: rabbitmq-broker-celery
+      restartPolicy: Always
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yaml -o k8s_deployment.yml
+    kompose.version: 1.32.0 (765fde254)
+  labels:
+    io.kompose.service: redis-backend-celery
+  name: redis-backend-celery
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: redis-backend-celery
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f docker-compose.yaml -o k8s_deployment.yml
+        kompose.version: 1.32.0 (765fde254)
+      labels:
+        io.kompose.network/ecommerce-microservices-default: "true"
+        io.kompose.service: redis-backend-celery
+    spec:
+      containers:
+        - image: redis:7
+          name: redis-backend-celery
+          ports:
+            - containerPort: 6379
+              hostPort: 6379
+              protocol: TCP
+      hostname: redis-backend-celery
+      restartPolicy: Always
