@@ -7,10 +7,11 @@ The project emulates a real-world application of an e-commerce following the mic
 
 ## Table of Contents
 - [Stack](#stack)
-- [Architecture and Decisions](#Architecture)
+- [Architecture and Decisions](#architecture)
 - [Installation](#installation)
-- [Future Work](#futurework)
+- [Future Work](#future-work)
 - [Usage](#usage)
+- [Deployment](#deployment)
 - [License](#license)
 
 ## Stack
@@ -21,7 +22,8 @@ This template utilizes the following tech-stack:
 * 🐳 [Dockerized](https://www.docker.com/)
 * 🐘 [Asynchronous PostgreSQL](https://www.postgresql.org/docs/current/libpq-async.html)
 * 🐍 [FastAPI](https://fastapi.tiangolo.com/)
-* [Celery](https://docs.celeryq.dev/en/stable/)
+* 🥦 [Celery](https://docs.celeryq.dev/en/stable/)
+* ☸ [Kubernetes](https://kubernetes.io/es/docs/concepts/overview/what-is-kubernetes/)
 
 **Complementary**
 * [TOML](https://toml.io/en/) $\rightarrow$ The one-for-all configuration file. This makes it simpler to setup our project.
@@ -31,7 +33,7 @@ This template utilizes the following tech-stack:
 * [PyTest](https://docs.pytest.org/en/7.2.x/) $\rightarrow$ The testing framework for Python code.
 * [GitHub Actions](https://github.com/features/actions) $\rightarrow$ The platform to setup our CI/CD by GitHub.
 * [SQLAlchemy 2.0](https://docs.sqlalchemy.org/en/20/orm/extensions/asyncio.html) $\rightarrow$ The go-to database interface library for Python. The 2.0 is the most recent update where it provides asynchronous setup.
-* [JWT](https://jwt.io/introduction) Is an open standard which defines a compact and self-contained way for securely transmitting information between parties as a JSON object
+* [JWT](https://jwt.io/introduction) $\rightarrow$ Is an open standard which defines a compact and self-contained way for securely transmitting information between parties as a JSON object
 
 
 ### Why this tech stack?
@@ -44,7 +46,7 @@ Well, the easy answer is **Asynchronousity** and **Speed**!
 ## Architecture
 The project has been implemented using microservices. This way, it simulates more nearly what a real-world application looks like and the challenges it presents.
 
-However, everything is contained in the same project, in order to avoid innecesary overhead.
+However, everything is contained in the same project, in order to avoid innecesary overhead: *monorepo*
 
 There are currently 3 different services:
 * **Account**: Currently it handles the login and manages the users database. For the login, it creates JWT with the corresponding scopes, attending to the role of the user.
@@ -80,10 +82,19 @@ _*Any of the 3 requirements.txt can be used_
 
 
 ## Usage
-In order to start the application:
+In order to start the application in the dev environment:
 ```
-docker-compose -f docker-compose.yaml -up -d
+docker-compose -f docker-compose.dev.yaml -up -d
 ```
+
+## Deployment
+In order to deploy the application, it can be used **kubernetes** technology. In the root folder of the project you can find an example manifest containing all the required services, deployments and PVCs.
+
+This file has been created using **kompose**, which converts a docker-compose.yml to a kubernetes manifest:
+```
+kompose convert -f docker-compose.yaml -o k8s_deployment.yml
+```
+
 
 ## License
 MIT License.
