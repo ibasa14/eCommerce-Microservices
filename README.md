@@ -58,7 +58,10 @@ There are still plenty of things that can improve the current version of the sof
 - Add the Shopping Cart Service making use of Flask/FastApi for the API along with redis as the DB
 - Implement the Front-end of the application. Possible technologies: ReactJS / Dash (Python).
 - Add a blob storage service for the products images.
-- Consume order events to populate an OLAP db (such as Clickhouse). This would require a first save into postqresQL and the implementation of an ETL. This OLAP could be used as a new dashboard service for data analytics.
+- Load logs to Clickhouse (OLAP database). Consume this data to extract insights to be shown in a dashboard (developed in plotly-dash) along with ML predictions. This will be implemented this way:
+  - Apache kafka will save logs (3 types: see product, search product, buy product) to the corresponding postgres table. Kafka will also handle the enrichment of the logs (will add a generic datetime format).
+  - An ETL will be used to load data from postgres to clickhouse. This will be done periodically using Airlfow, once loaded, the model will be retrained with the data.
+  - Dash will extract data from Clickhouse to render some graphs in the dashboard.
 
 
 ## Installation
