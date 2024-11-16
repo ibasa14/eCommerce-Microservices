@@ -16,7 +16,6 @@ The project emulates a real-world application of an e-commerce following the mic
 
 ## Stack
 The project uses the following tech-stack:
-This template utilizes the following tech-stack:
 
 **Main**
 * 🐳 [Dockerized](https://www.docker.com/)
@@ -51,11 +50,11 @@ However, everything is contained in the same project, in order to avoid innecesa
 There are currently 3 different services:
 * **Account**: Currently it handles the login and manages the users database. For the login, it creates JWT with the corresponding scopes, attending to the role of the user.
 * **Product**: Manages the inventory of the products offered in the application.
-* **Order**: Manages the orders. Once the user makes an order, the inventory is updated accordingly (internal API call to the Product service is made), then a simulated email is sent to the user. This task is handled thuough the task manager: **Celery**
+* **Order**: Manages the orders. Once the user makes an order, the inventory is updated accordingly (internal API call to the Product service is made), then a simulated email is sent to the user. This task is handled through the task manager: **Celery**
 
 ## Future Work
 There are still plenty of things that can improve the current version of the software. Here are some ideas that could be implemented in the future:
-- Add the Shopping Cart Service making use of Flask/FastApi for the API along with redis as the DB
+- Add the Shopping Cart Service making use of Flask/FastApi for the API along with redis as the DB.
 - Implement the Front-end of the application. Possible technologies: ReactJS / Dash (Python).
 - Add a blob storage service for the products images.
 - Load logs to Clickhouse (OLAP database). Consume this data to extract insights to be shown in a dashboard (developed in plotly-dash) along with ML predictions. This will be implemented this way:
@@ -68,27 +67,44 @@ There are still plenty of things that can improve the current version of the sof
 It requires:
 * Python 3.10
 * Docker
+* pre-commit
 
 1.- Pull the project
 ```
-git fetch https://github.com/ibasa14/FastAPI-template-IBC.git
+git fetch https://github.com/ibasa14/eCommerce-Microservices
 ```
-2.- Create the virtual environment:
+2.- Install docker and docker compose if not installed:
 ```
-python3.10 -m venv env && source env/bin/activate
+sudo apt install docker
+sudo apt install docker-compose
 ```
-3.- Install dependencies (with the environment activated):
+3.- In case you want to run it locally using kubernetes:
 ```
-pip install -r order/requirements.txt
+sudo apt install kubectl
 ```
-_*Any of the 3 requirements.txt can be used_
 
-
-## Usage
+## Run the system
 In order to start the application in the dev environment:
 ```
 docker-compose -f docker-compose.dev.yaml -up -d
 ```
+After the system is running, you can connect for example into the Account documentation, by browsing the following URL (In case no changes are made here): localhost:8003/docs
+
+To stop the execution, you can just type:
+```
+docker-compose down
+```
+
+You might have noticed there are two different docker compose manifests. One is for dev, the other is por "production".
+It is probably not a good option to deploy in production a system using docker-compose. As it is not able to scale and lacks many features. But it is often used for developing porpuses. At the end, you can always convert the docker-compose to a kubernetes manifest.
+The difference with the dev and the prod docker compose manifest is the usage of volumes, as well as other adaptions made to the prod one in order to enable the conversion to a kubernetes manifest.
+
+## Development
+In this repo it is used the pre-commit hooks tool. If you don't have it installed. Run the following command:
+```
+pre-commit install
+```
+Other tool which is very useful in order to be able to quickly connect to the different containers to see logs, etc is the *Docker Desktop*. Other option is install the extension for Vscode, which works good also.
 
 ## Deployment
 In order to deploy the application, it can be used **kubernetes** technology. In the root folder of the project you can find an example manifest containing all the required services, deployments and PVCs.
@@ -96,6 +112,26 @@ In order to deploy the application, it can be used **kubernetes** technology. In
 This file has been created using **kompose**, which converts a docker-compose.yml to a kubernetes manifest:
 ```
 kompose convert -f docker-compose.yaml -o k8s_deployment.yml
+```
+Before deploying it in the cloud, if any change has been made and you want to check locally whether it works, you can deploy locally doing the following:
+
+You can use *minikube* to run kubernetes locally. You will need to install it in case you haven't yet.
+After, you will need to initialize minikube:
+```
+minikube start
+```
+Later, to check if minikube is up and running:
+```
+minikube status
+```
+In case everything looks correct, then you can deploy the manifest:
+```
+kubectl apply -f k8s_deployment.example.yml
+```
+
+In case kubernetes is not install, you need to run:
+```
+sudo apt install kubectl
 ```
 
 
